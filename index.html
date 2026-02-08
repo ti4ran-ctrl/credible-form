@@ -2,478 +2,476 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <!-- App Settings for Mobile -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Credible+">
-    <meta name="mobile-web-app-capable" content="yes">
-    
-    <title>Credible Plus - Agent App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Credible Plus - Text Fix</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        body { 
-            font-family: 'Assistant', sans-serif; 
-            background-color: #f1f5f9; 
-            margin: 0; 
-            padding: 0; 
-            -webkit-tap-highlight-color: transparent;
+        :root {
+            --brand-gold: #c5a059;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --bg-dark: #0f172a;
+            --border-primary: #e2e8f0;
+            --accent-gold: #eab308;
         }
-        
-        /* Agent UI Styles */
+
+        html, body { 
+            overflow-x: hidden; 
+            width: 100%;
+            background-color: var(--bg-dark);
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            font-family: 'Assistant', sans-serif;
+        }
+
+        /* Agent UI */
         .agent-ui { 
-            background: #0f172a; 
+            background: var(--bg-dark); 
             color: white; 
-            padding: 40px 20px 25px 20px; 
-            border-bottom: 3px solid #c5a059;
+            padding: 20px; 
+            border-bottom: 2px solid var(--brand-gold);
+            width: 100%;
+            box-sizing: border-box;
         }
+
         .agent-ui input, .agent-ui select { 
             background: #1e293b; 
             border: 1px solid #334155; 
             color: white; 
-            border-radius: 12px; 
-            padding: 12px; 
+            border-radius: 8px; 
+            padding: 10px; 
             width: 100%; 
-            margin-top: 5px; 
-            font-size: 16px; 
-        }
-        .agent-ui label { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-right: 4px; line-height: 1.2; display: block; }
-
-        /* The Document Design */
-        .page { 
-            background: white; 
-            width: 100%; 
-            max-width: 500px; 
-            margin: 0 auto; 
-            padding: 40px 25px; 
-            position: relative; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            border-radius: 4px;
+            margin-top: 4px; 
+            font-size: 15px;
+            text-align: right;
+            outline: none;
         }
 
-        #render-container {
-            padding: 20px 10px;
-        }
-
-        /* Branding */
-        .brand-logo-wrapper { text-align: center; margin-bottom: 25px; }
-        .brand-main-text { font-size: 34px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
-        .brand-credible { color: #0f172a; }
-        .brand-plus { color: #c5a059; margin-right: 2px; }
-        .brand-subtext { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 2px; margin-top: 6px; text-transform: uppercase; }
-        
-        .title-area { text-align: center; margin-bottom: 30px; }
-        .title-area h1 { font-size: 19px; font-weight: 800; color: #1e293b; border-bottom: 2px solid #c5a059; display: inline-block; padding-bottom: 4px; }
-
-        .proposal-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
-        .proposal-table td { 
-            border: 1px solid #e2e8f0; 
-            padding: 14px 12px; 
-            text-align: right; 
-            font-size: 14px; 
-        }
-        .proposal-table .label-col { background-color: #f8fafc; color: #64748b; font-weight: 700; width: 45%; }
-        .proposal-table .value-col { color: #1e293b; font-weight: 800; }
-        .proposal-table .highlight-row { background-color: #fdfbf7; }
-        .proposal-table .main-val { font-size: 19px; color: #000; font-weight: 900; }
-
-        .extra-info { margin-top: 15px; }
-        .extra-item { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
-        .extra-label { font-size: 12px; font-weight: 800; color: #c5a059; margin-bottom: 2px; }
-        .extra-value { font-size: 14px; color: #334155; font-weight: 600; }
-
-        .footer-line { margin-top: 40px; border-top: 1px solid #f1f5f9; padding-top: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature-box { text-align: center; }
-        .signature-line { width: 110px; border-bottom: 1px solid #000; margin-bottom: 5px; }
-
-        #loading-overlay { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(15, 23, 42, 0.9); 
-            z-index: 10000; 
-            flex-direction: column; 
+        .top-bar { 
+            display: flex; 
+            justify-content: space-between; 
             align-items: center; 
-            justify-content: center; 
-            color: white;
+            margin-bottom: 15px;
         }
 
-        .share-btn {
-            background: #c5a059;
-            color: black;
-            padding: 14px 24px;
-            border-radius: 50px;
-            font-weight: 800;
+        .share-btn-top {
+            background: var(--brand-gold);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
             font-size: 14px;
-            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
-            transition: all 0.2s;
         }
-        .share-btn:active { transform: scale(0.95); opacity: 0.9; }
+
+        /* Document Area */
+        #render-wrap {
+            background: #f1f5f9;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        #document-area { 
+            background: white; 
+            width: 595px; 
+            min-height: 842px; 
+            padding: 45px 40px; 
+            box-sizing: border-box;
+            direction: rtl;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .doc-header-meta {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+
+        .title-wrapper {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .doc-main-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            border-bottom: 4px solid var(--accent-gold);
+            display: inline-block;
+            padding-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        /* Groups and Rows */
+        .doc-group {
+            border: 1.5px solid var(--border-primary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background-color: #ffffff;
+        }
+
+        .doc-group-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.05em;
+        }
+
+        .row-item {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            width: 100%;
+            padding: 10px 0; /* מוגדל מעט למניעת חיתוך */
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .row-item:not(:last-child) {
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .row-item .label {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14.5px;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        .row-item .value {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 16px;
+            text-align: left;
+            flex-grow: 1;
+            line-height: 1.4;
+            padding-bottom: 2px; /* מונע חיתוך חלק תחתון של הטקסט */
+        }
+
+        /* Fee Specific Rows within Group */
+        .fee-sub-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-top: 8px;
+            border-top: 1px solid #f8fafc;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+            line-height: 1.4;
+        }
+
+        .fee-sub-row strong {
+            color: var(--text-dark);
+            font-weight: 800;
+            direction: ltr;
+            margin-right: 8px;
+            padding-bottom: 2px;
+        }
+
+        /* Notes */
+        .notes-content {
+            font-size: 14.5px;
+            color: #475569;
+            line-height: 1.6;
+            font-weight: 500;
+            word-wrap: break-word; /* הערות כן יכולות להישבר אם הן ארוכות מאוד */
+            white-space: normal; 
+        }
+
+        .doc-footer-legal { 
+            margin-top: auto;
+            font-size: 10px; 
+            color: #94a3b8; 
+            padding: 25px 0 15px 0; 
+            text-align: center;
+            line-height: 1.6;
+            border-top: 1px solid #f8fafc;
+        }
+
+        .doc-contact-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--brand-gold);
+            font-weight: 700;
+            padding-top: 10px;
+        }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="loading-overlay">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#c5a059] mb-4"></div>
-        <p class="text-sm font-bold uppercase tracking-widest">מייצר הצעה רשמית...</p>
-    </div>
-
-    <!-- Agent UI -->
     <div class="agent-ui">
         <div class="max-w-md mx-auto">
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="text-xl font-black text-white leading-none">Credible<span class="text-[#c5a059]">plus</span></h2>
-                    <p class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">Agent Terminal</p>
-                </div>
-                <button onclick="shareAsImage()" class="share-btn">שתף הצעה</button>
+            <div class="top-bar">
+                <h2 class="text-xl font-black text-white">Credible<span class="text-[#c5a059]">plus</span></h2>
+                <button id="btn-share" onclick="handleShare()" class="share-btn-top">שתף הצעה</button>
             </div>
-
-            <div class="space-y-4">
-                <div>
-                    <label>שם לקוח</label>
-                    <input type="text" id="in-name" placeholder="שם הלקוח" oninput="update()">
+            
+            <div class="space-y-2">
+                <input type="text" id="in-name" placeholder="שם הלקוח" oninput="queueUpdate()">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-amount" placeholder="סכום המימון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-balloon" placeholder="בלון" oninput="formatInput(this); queueUpdate()">
                 </div>
                 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>סכום המימון</label>
-                        <input type="tel" inputmode="decimal" id="in-amount" placeholder="0" oninput="formatInput(this); update()">
-                    </div>
-                    <div>
-                        <label>תקופה (חודשים)</label>
-                        <input type="tel" inputmode="numeric" id="in-period" value="60" oninput="update()">
-                    </div>
-                    <div>
-                        <label>בלון (סוף תקופה)</label>
-                        <input type="tel" inputmode="decimal" id="in-balloon" value="0" oninput="formatInput(this); update()">
-                    </div>
-                    <div>
-                        <label>מסלול</label>
-                        <select id="in-route" onchange="toggleRoute(); update()">
-                            <option value="prime">פריים (Prime)</option>
-                            <option value="index">צמוד מדד</option>
-                        </select>
-                    </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-period" value="60" oninput="queueUpdate()">
+                    <select id="in-route-type" onchange="toggleRouteFields(); queueUpdate()">
+                        <option value="prime">צמוד פריים</option>
+                        <option value="index">צמוד מדד</option>
+                    </select>
                 </div>
 
-                <div id="prime-settings" class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>ריבית פריים בסיס</label>
-                        <input type="tel" inputmode="decimal" id="in-prime-base" value="5.5" oninput="savePrimeBase(); update()">
-                    </div>
-                    <div>
-                        <label>מרווח (+/-)</label>
-                        <input type="tel" inputmode="decimal" id="in-margin" value="0" oninput="update()">
-                    </div>
+                <div class="grid grid-cols-2 gap-2" id="prime-fields">
+                    <input type="tel" id="in-prime-base" value="5.5" oninput="queueUpdate()">
+                    <input type="tel" id="in-prime-margin" value="0.5" oninput="queueUpdate()">
+                </div>
+                <div class="hidden" id="index-fields">
+                    <input type="tel" id="in-index-rate" value="4.5" oninput="queueUpdate()">
+                </div>
+
+                <input type="text" id="in-fee" value="1.5% + 380 ש״ח (+מע״מ)" oninput="queueUpdate()">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-fee-cc" placeholder="עמלה בכ״א (חתימה)" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-fee-hk" placeholder="עמלה בהוראת קבע" oninput="formatInput(this); queueUpdate()">
                 </div>
                 
-                <div id="index-settings" class="hidden">
-                    <label>ריבית שנתית %</label>
-                    <input type="tel" inputmode="decimal" id="in-index-rate" value="4.4" oninput="update()">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-to-repay" placeholder="עובר לפירעון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-to-importer" placeholder="עובר ליבואן" oninput="formatInput(this); queueUpdate()">
                 </div>
+
+                <input type="text" id="in-notes" placeholder="הערות מיוחדות" oninput="queueUpdate()">
                 
-                <div>
-                    <label>עמלת שירות</label>
-                    <input type="text" id="in-fee" value="1.5% + 380 ש״ח (+מע״מ)" oninput="update()">
-                </div>
-
-                <!-- שדות חדשים: פירוט גביית עמלה -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>חלק עמלה בכ״א (חתימה)</label>
-                        <input type="tel" inputmode="decimal" id="in-fee-cc" placeholder="0" oninput="formatInput(this); update()">
-                    </div>
-                    <div>
-                        <label>חלק עמלה בהוראת קבע</label>
-                        <input type="tel" inputmode="decimal" id="in-fee-dd" placeholder="0" oninput="formatInput(this); update()">
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800 space-y-3">
-                    <label class="block mb-1">מידע נוסף להצעה</label>
-                    <input type="tel" inputmode="decimal" id="in-repay" placeholder="פרעון הלוואה קיימת" oninput="formatInput(this); update()">
-                    <input type="tel" inputmode="decimal" id="in-transfer" placeholder="העברה ליבואן" oninput="formatInput(this); update()">
-                    <input type="text" id="in-notes" placeholder="הערות נוספות" oninput="update()">
-                </div>
+                <button onclick="generateAIAnalysis()" class="w-full bg-slate-700 text-white py-2 rounded-lg font-bold mt-2 hover:bg-slate-600 transition-all text-sm">✨ ניתוח AI מעודן</button>
             </div>
         </div>
     </div>
 
-    <!-- The Document Area -->
-    <div id="render-container">
-        <div class="page" id="document-area">
-            <div class="brand-logo-wrapper">
-                <div class="brand-main-text">
-                    <span class="brand-credible">Credible</span><span class="brand-plus">plus</span>
-                </div>
-                <div class="brand-subtext">ייעוץ וליווי אשראי</div>
+    <div id="render-wrap">
+        <div id="document-area">
+            <div class="doc-header-meta">
+                <span>בס"ד</span>
+                <span id="display-date"></span>
+            </div>
+
+            <div class="title-wrapper">
+                <h1 class="doc-main-title">סיכום תנאי מימון רכב</h1>
+            </div>
+
+            <!-- קבוצה 1: לקוח -->
+            <div class="doc-group">
+                <div class="doc-group-title">פרטי הלקוח</div>
+                <div class="row-item"><div class="label">שם הלקוח</div><div class="value" id="out-name">---</div></div>
+            </div>
+
+            <!-- קבוצה 2: מימון -->
+            <div class="doc-group">
+                <div class="doc-group-title">פרטי המימון והחזרים</div>
+                <div class="row-item"><div class="label">סכום המימון</div><div class="value" id="out-amount" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">תשלום חודשי משוער</div><div class="value" id="out-monthly" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">יתרה בסוף תקופה (בלון)</div><div class="value" id="out-balloon" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">תקופת הלוואה</div><div class="value" id="out-period">0 חודשים</div></div>
+                <div class="row-item"><div class="label">מסלול ריבית</div><div class="value" id="out-rate" style="direction:ltr;">---</div></div>
             </div>
             
-            <div class="title-area">
-                <h1>סיכום תנאי מימון רכב</h1>
+            <!-- קבוצה 3: עמלות -->
+            <div class="doc-group">
+                <div class="doc-group-title">פירוט עמלות</div>
+                <div class="row-item"><div class="label">עמלה</div><div id="out-fee" class="value">---</div></div>
+                <div id="part-cc" class="fee-sub-row hidden"><span>חלק יחסי מהעמלה יגבה בכ״א במעמד החתימה:</span> <strong id="out-fee-cc">0 ₪</strong></div>
+                <div id="part-hk" class="fee-sub-row hidden"><span>החלק הנוסף יגבה בהוראת קבע:</span> <strong id="out-fee-hk">0 ₪</strong></div>
             </div>
 
-            <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-2 px-1">
-                <span>תאריך: <span id="display-date"></span></span>
-                <span>בס"ד</span>
+            <!-- קבוצה 4: העברות -->
+            <div id="group-transfers" class="doc-group hidden">
+                <div class="doc-group-title">פירוט העברות כספים</div>
+                <div id="row-repay" class="row-item hidden"><div class="label">עובר לפירעון</div><div class="value" id="out-to-repay" style="direction:ltr;">0 ₪</div></div>
+                <div id="row-importer" class="row-item hidden"><div class="label">עובר ליבואן</div><div class="value" id="out-to-importer" style="direction:ltr;">0 ₪</div></div>
             </div>
 
-            <table class="proposal-table">
-                <tr>
-                    <td class="label-col">שם הלקוח</td>
-                    <td class="value-col" id="out-name">---</td>
-                </tr>
-                <tr>
-                    <td class="label-col">סכום המימון</td>
-                    <td class="value-col" id="out-amount">₪ 0</td>
-                </tr>
-                <tr class="highlight-row">
-                    <td class="label-col">תשלום חודשי משוער</td>
-                    <td class="value-col main-val" id="out-monthly">₪ 0</td>
-                </tr>
-                <tr>
-                    <td class="label-col">בלון (סוף תקופה)</td>
-                    <td class="value-col" id="out-balloon">₪ 0</td>
-                </tr>
-                <tr>
-                    <td class="label-col">תקופת הלוואה</td>
-                    <td class="value-col"><span id="out-period">0</span> חודשים</td>
-                </tr>
-                <tr>
-                    <td class="label-col">מסלול ריבית</td>
-                    <td class="value-col text-[12px]" id="out-rate">---</td>
-                </tr>
-                <tr>
-                    <td class="label-col">עמלת שירות וליווי</td>
-                    <td class="value-col text-[12px]" id="out-fee">---</td>
-                </tr>
-            </table>
+            <!-- קבוצה 5: הערות -->
+            <div id="row-notes" class="doc-group hidden">
+                <div class="doc-group-title">הערות ודגשים</div>
+                <div class="notes-content" id="out-notes"></div>
+            </div>
 
-            <div class="extra-info">
-                <!-- תצוגת חלוקת עמלה במסמך (מופיע רק אם הוכנס ערך) -->
-                <div id="row-fee-split" class="extra-item hidden">
-                    <div class="extra-label">פירוט תשלום עמלה:</div>
-                    <div class="extra-value text-[13px]" id="out-fee-split"></div>
-                </div>
-
-                <div id="row-repay" class="extra-item hidden">
-                    <div class="extra-label">פרעון הלוואה:</div>
-                    <div class="extra-value" id="out-repay"></div>
-                </div>
-                <div id="row-transfer" class="extra-item hidden">
-                    <div class="extra-label">העברה ליבואן לאחר פרעון:</div>
-                    <div class="extra-value" id="out-transfer"></div>
-                </div>
-                <div id="row-notes" class="extra-item hidden">
-                    <div class="extra-label">הערות:</div>
-                    <div class="extra-value" id="out-notes"></div>
+            <div id="ai-analysis-container" class="hidden mt-4 mb-4">
+                <div class="p-4 bg-slate-50 rounded-lg border-r-4 border-brand-gold">
+                    <div id="ai-content" class="text-[14px] font-semibold text-slate-700 italic"></div>
                 </div>
             </div>
 
-            <!-- Notes Section -->
-            <div class="mt-8 text-[10px] text-gray-400 leading-relaxed border-t pt-4">
-                <div class="text-gray-600 font-bold mb-1">
-                    * חלק מהעמלות יגבו בכרטיס אשראי במעמד החתימה ע״י קרדיבל והחלק הנוסף בהוראת קבע
-                </div>
-                <div>
-                    * הצעה זו כפופה לאישור סופי של הגוף המממן. גובה ההחזר מושפע משינויי הריבית במשק. נדרש רישום שעבוד וביטוח מקיף לרכב.
-                </div>
-                <div class="mt-1">
-                    * ההצעה נכונה ליום שליחת מסמך זה ויכולה להשתנות בכל עת.
-                </div>
-                <div class="text-gray-700 font-extrabold mt-2 italic">
-                    * ט.ל.ח
-                </div>
-            </div>
-
-            <div class="footer-line">
-                <div class="signature-box">
-                    <div class="signature-line"></div>
-                    <div class="text-[9px] font-bold">חתימת הלקוח</div>
-                </div>
-                <div class="text-left opacity-20 text-[11px] font-black italic">
-                    CREDIBLE PLUS LTD
+            <div class="doc-footer-legal">
+                • הרכב נרשם על שם הלקוח ומשועבד לגוף המממן בלבד • בכפוף לתנאי החיתום • ט.ל.ח
+                <div class="doc-contact-bar">
+                    <span>📞 03-5031503</span>
+                    <span>✉️ office@credible.co.il</span>
+                    <span>🌐 www.credible.co.il</span>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('display-date').innerText = new Date().toLocaleDateString('he-IL');
+        const apiKey = "";
+        let lastBlob = null;
+        let updateTimeout = null;
 
-        window.onload = function() {
-            const savedPrime = localStorage.getItem('primeBase');
-            if (savedPrime) {
-                document.getElementById('in-prime-base').value = savedPrime;
-            }
+        function formatInput(el) {
+            let v = el.value.replace(/,/g, '');
+            if(!isNaN(v) && v !== "") el.value = parseFloat(v).toLocaleString('en-US');
+        }
+
+        function getVal(id) { return document.getElementById(id).value.replace(/,/g, '') || 0; }
+        function formatNum(n) { return "₪ " + Math.round(n).toLocaleString('en-US'); }
+
+        function toggleRouteFields() {
+            const t = document.getElementById('in-route-type').value;
+            document.getElementById('prime-fields').classList.toggle('hidden', t !== 'prime');
+            document.getElementById('index-fields').classList.toggle('hidden', t !== 'index');
+        }
+
+        function queueUpdate() {
             update();
-        };
-
-        function savePrimeBase() {
-            const val = document.getElementById('in-prime-base').value;
-            localStorage.setItem('primeBase', val);
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(preRender, 800);
         }
 
-        // פונקציית עיצוב עם פסיקים למספרים תוך כדי הקלדה
-        function formatInput(input) {
-            let cursorPosition = input.selectionStart;
-            let originalLength = input.value.length;
-            let value = input.value.replace(/,/g, '');
-            if (!isNaN(value) && value !== "") {
-                input.value = parseFloat(value).toLocaleString('en-US');
-            }
-            let newLength = input.value.length;
-            input.setSelectionRange(cursorPosition + (newLength - originalLength), cursorPosition + (newLength - originalLength));
-        }
-
-        function getRawNum(id) {
-            let val = document.getElementById(id).value.replace(/,/g, '');
-            return parseFloat(val) || 0;
-        }
-
-        function formatNum(num) {
-            return Math.round(num).toLocaleString('he-IL');
-        }
-
-        function toggleRoute() {
-            const route = document.getElementById('in-route').value;
-            document.getElementById('prime-settings').classList.toggle('hidden', route !== 'prime');
-            document.getElementById('index-settings').classList.toggle('hidden', route !== 'index');
+        async function preRender() {
+            try {
+                const el = document.getElementById('document-area');
+                const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+                canvas.toBlob(blob => { lastBlob = blob; }, 'image/png', 1.0);
+            } catch(e) {}
         }
 
         function update() {
-            const name = document.getElementById('in-name').value || "---";
-            const amount = getRawNum('in-amount');
-            const period = parseInt(document.getElementById('in-period').value) || 1;
-            const balloon = getRawNum('in-balloon');
-            const route = document.getElementById('in-route').value;
-            const fee = document.getElementById('in-fee').value;
+            const amount = parseFloat(getVal('in-amount'));
+            const period = parseInt(getVal('in-period')) || 1;
+            const balloon = parseFloat(getVal('in-balloon'));
+            const type = document.getElementById('in-route-type').value;
             
-            // שדות פירוט עמלה
-            const feeCC = getRawNum('in-fee-cc');
-            const feeDD = getRawNum('in-fee-dd');
-
-            const repay = document.getElementById('in-repay').value;
-            const transfer = document.getElementById('in-transfer').value;
-            const notes = document.getElementById('in-notes').value;
-
-            let finalRate = 0;
-            let rateDesc = "";
-
-            if(route === 'prime') {
+            let totalRate = 0, rateText = "";
+            if(type === 'prime') {
                 const base = parseFloat(document.getElementById('in-prime-base').value) || 0;
-                const margin = parseFloat(document.getElementById('in-margin').value) || 0;
-                finalRate = base + margin;
-                rateDesc = `פריים (${base.toFixed(2)}%) ${margin >= 0 ? '+' : ''}${margin}% = ${finalRate.toFixed(2)}%`;
+                const margin = parseFloat(document.getElementById('in-prime-margin').value) || 0;
+                totalRate = (base + margin).toFixed(2);
+                const marginStr = margin >= 0 ? `+${margin}` : `${margin}`;
+                rateText = `<bdi>(P${marginStr}%)</bdi> ${totalRate}%`;
             } else {
-                finalRate = parseFloat(document.getElementById('in-index-rate').value) || 0;
-                rateDesc = `צמוד מדד ${finalRate.toFixed(2)}%`;
+                totalRate = parseFloat(document.getElementById('in-index-rate').value) || 0;
+                rateText = `צמוד מדד ${totalRate}%`;
             }
 
-            const mRate = (finalRate / 100) / 12;
-            const bPV = balloon / Math.pow(1 + mRate, period);
+            const mRate = (parseFloat(totalRate)/100)/12;
+            const bPV = balloon / Math.pow(1+mRate, period);
             const lAmt = amount - bPV;
-            let monthly = 0;
-            if (mRate === 0) {
-                monthly = lAmt / period;
-            } else {
-                monthly = lAmt * (mRate * Math.pow(1+mRate, period)) / (Math.pow(1+mRate, period) - 1);
-            }
+            const monthly = mRate === 0 ? lAmt/period : lAmt * (mRate * Math.pow(1+mRate, period)) / (Math.pow(1+mRate, period) - 1);
 
-            document.getElementById('out-name').innerText = name;
-            document.getElementById('out-amount').innerText = "₪ " + formatNum(amount);
-            document.getElementById('out-monthly').innerText = "₪ " + formatNum(monthly);
-            document.getElementById('out-balloon').innerText = "₪ " + formatNum(balloon);
-            document.getElementById('out-period').innerText = period;
-            document.getElementById('out-rate').innerText = rateDesc;
-            document.getElementById('out-fee').innerText = fee;
-
-            // עדכון שורת פירוט העמלה במסמך
-            const rowFeeSplit = document.getElementById('row-fee-split');
-            if(feeCC > 0 || feeDD > 0) {
-                rowFeeSplit.classList.remove('hidden');
-                let splitText = "";
-                if(feeCC > 0) splitText += `₪${formatNum(feeCC)} בכ״א במעמד חתימה`;
-                if(feeCC > 0 && feeDD > 0) splitText += " | ";
-                if(feeDD > 0) splitText += `₪${formatNum(feeDD)} בהוראת קבע`;
-                document.getElementById('out-fee-split').innerText = splitText;
-            } else {
-                rowFeeSplit.classList.add('hidden');
-            }
-
-            const updateExtra = (id, val, isCurrency = false) => {
-                const row = document.getElementById('row-' + id);
-                const out = document.getElementById('out-' + id);
-                if(val) {
-                    row.classList.remove('hidden');
-                    out.innerText = isCurrency ? "₪ " + val : val;
-                } else {
-                    row.classList.add('hidden');
-                }
-            };
-
-            updateExtra('repay', repay, true);
-            updateExtra('transfer', transfer, true);
-            updateExtra('notes', notes);
-        }
-
-        async function shareAsImage() {
-            const loader = document.getElementById('loading-overlay');
-            loader.style.display = 'flex';
+            document.getElementById('out-name').innerText = document.getElementById('in-name').value || "---";
+            document.getElementById('out-amount').innerText = formatNum(amount);
+            document.getElementById('out-monthly').innerText = formatNum(monthly);
+            document.getElementById('out-balloon').innerText = formatNum(balloon);
+            document.getElementById('out-period').innerText = period + " חודשים";
+            document.getElementById('out-rate').innerHTML = rateText;
             
-            const docArea = document.getElementById('document-area');
-            
-            const originalShadow = docArea.style.boxShadow;
-            const originalWidth = docArea.style.width;
-            docArea.style.boxShadow = 'none';
-            docArea.style.width = '500px'; 
+            document.getElementById('out-fee').innerText = document.getElementById('in-fee').value || "---";
 
-            try {
-                const canvas = await html2canvas(docArea, {
-                    scale: 3, 
-                    useCORS: true,
-                    backgroundColor: "#ffffff",
-                    logging: false,
-                    width: 500, 
-                    windowWidth: 500
-                });
+            const feeCC = parseFloat(getVal('in-fee-cc'));
+            const feeHK = parseFloat(getVal('in-fee-hk'));
+            
+            if(feeCC > 0) {
+                document.getElementById('part-cc').classList.remove('hidden');
+                document.getElementById('out-fee-cc').innerText = formatNum(feeCC);
+            } else document.getElementById('part-cc').classList.add('hidden');
+            
+            if(feeHK > 0) {
+                document.getElementById('part-hk').classList.remove('hidden');
+                document.getElementById('out-fee-hk').innerText = formatNum(feeHK);
+            } else document.getElementById('part-hk').classList.add('hidden');
+
+            const toRepay = parseFloat(getVal('in-to-repay'));
+            const toImporter = parseFloat(getVal('in-to-importer'));
+            if(toRepay > 0 || toImporter > 0) {
+                document.getElementById('group-transfers').classList.remove('hidden');
+                if(toRepay > 0) {
+                    document.getElementById('row-repay').classList.remove('hidden');
+                    document.getElementById('out-to-repay').innerText = formatNum(toRepay);
+                } else document.getElementById('row-repay').classList.add('hidden');
                 
-                docArea.style.boxShadow = originalShadow;
-                docArea.style.width = originalWidth;
-
-                canvas.toBlob(async (blob) => {
-                    const clientName = document.getElementById('out-name').innerText || "לקוח";
-                    const fileName = `הצעה_קרדיבל_${clientName}.png`;
-                    const file = new File([blob], fileName, { type: 'image/png' });
-                    
-                    loader.style.display = 'none';
-
-                    if (navigator.share && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            files: [file],
-                            title: 'הצעת מימון - קרדיבל פלוס',
-                            text: `מצורפת הצעת מימון עבור ${clientName}`
-                        });
-                    } else {
-                        const link = document.createElement('a');
-                        link.download = fileName;
-                        link.href = canvas.toDataURL('image/png');
-                        link.click();
-                    }
-                }, 'image/png');
-            } catch (e) {
-                docArea.style.boxShadow = originalShadow;
-                docArea.style.width = originalWidth;
-                loader.style.display = 'none';
-                alert('שגיאה ביצירת התמונה.');
+                if(toImporter > 0) {
+                    document.getElementById('row-importer').classList.remove('hidden');
+                    document.getElementById('out-to-importer').innerText = formatNum(toImporter);
+                } else document.getElementById('row-importer').classList.add('hidden');
+            } else {
+                document.getElementById('group-transfers').classList.add('hidden');
             }
+
+            const n = document.getElementById('in-notes').value;
+            if(n) { document.getElementById('row-notes').classList.remove('hidden'); document.getElementById('out-notes').innerText = n; }
+            else document.getElementById('row-notes').classList.add('hidden');
         }
+
+        async function generateAIAnalysis() {
+            const prompt = `כתוב ניתוח פיננסי מקצועי (עד 20 מילים) להצעה: סכום ${document.getElementById('out-amount').innerText}, החזר ${document.getElementById('out-monthly').innerText}.`;
+            try {
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const res = await r.json();
+                document.getElementById('ai-analysis-container').classList.remove('hidden');
+                document.getElementById('ai-content').innerText = res.candidates?.[0]?.content?.parts?.[0]?.text;
+                queueUpdate();
+            } catch(e) {}
+        }
+
+        async function handleShare() {
+            try {
+                if (!lastBlob) {
+                    const el = document.getElementById('document-area');
+                    const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+                    lastBlob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));
+                }
+                const name = document.getElementById('out-name').innerText.trim() || "לקוח";
+                const file = new File([lastBlob], `הצעה_ל-${name}.png`, { type: 'image/png' });
+                if (navigator.share) {
+                    await navigator.share({ files: [file], title: 'קרדיבל פלוס - הצעה' });
+                }
+            } catch (err) {}
+        }
+        
+        window.onload = () => { 
+            document.getElementById('display-date').innerText = new Date().toLocaleDateString('he-IL');
+            update(); 
+            setTimeout(preRender, 1500);
+        };
     </script>
 </body>
 </html>
