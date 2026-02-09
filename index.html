@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Credible Plus - Text Fix</title>
+    <title>Credible Plus - Updated Order</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -139,7 +139,7 @@
             justify-content: space-between; 
             align-items: center;
             width: 100%;
-            padding: 10px 0; /* מוגדל מעט למניעת חיתוך */
+            padding: 10px 0;
             gap: 15px;
             white-space: nowrap;
         }
@@ -163,7 +163,7 @@
             text-align: left;
             flex-grow: 1;
             line-height: 1.4;
-            padding-bottom: 2px; /* מונע חיתוך חלק תחתון של הטקסט */
+            padding-bottom: 2px;
         }
 
         /* Fee Specific Rows within Group */
@@ -195,27 +195,18 @@
             color: #475569;
             line-height: 1.6;
             font-weight: 500;
-            word-wrap: break-word; /* הערות כן יכולות להישבר אם הן ארוכות מאוד */
+            word-wrap: break-word;
             white-space: normal; 
         }
 
         .doc-footer-legal { 
             margin-top: auto;
-            font-size: 10px; 
+            font-size: 10.5px; 
             color: #94a3b8; 
             padding: 25px 0 15px 0; 
             text-align: center;
-            line-height: 1.6;
+            line-height: 1.8;
             border-top: 1px solid #f8fafc;
-        }
-
-        .doc-contact-bar {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--brand-gold);
-            font-weight: 700;
-            padding-top: 10px;
         }
 
         .hidden { display: none !important; }
@@ -234,12 +225,12 @@
                 <input type="text" id="in-name" placeholder="שם הלקוח" oninput="queueUpdate()">
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="tel" id="in-amount" placeholder="סכום המימון" oninput="formatInput(this); queueUpdate()">
-                    <input type="tel" id="in-balloon" placeholder="בלון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-amount" inputmode="decimal" placeholder="סכום המימון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-balloon" inputmode="decimal" placeholder="בלון" oninput="formatInput(this); queueUpdate()">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="tel" id="in-period" value="60" oninput="queueUpdate()">
+                    <input type="tel" id="in-period" inputmode="numeric" value="60" oninput="queueUpdate()">
                     <select id="in-route-type" onchange="toggleRouteFields(); queueUpdate()">
                         <option value="prime">צמוד פריים</option>
                         <option value="index">צמוד מדד</option>
@@ -247,28 +238,26 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2" id="prime-fields">
-                    <input type="tel" id="in-prime-base" value="5.5" oninput="queueUpdate()">
-                    <input type="tel" id="in-prime-margin" value="0.5" oninput="queueUpdate()">
+                    <input type="tel" id="in-prime-base" inputmode="decimal" value="5.5" oninput="queueUpdate()">
+                    <input type="tel" id="in-prime-margin" inputmode="decimal" value="0.5" oninput="queueUpdate()">
                 </div>
                 <div class="hidden" id="index-fields">
-                    <input type="tel" id="in-index-rate" value="4.5" oninput="queueUpdate()">
+                    <input type="tel" id="in-index-rate" inputmode="decimal" value="4.5" oninput="queueUpdate()">
                 </div>
 
                 <input type="text" id="in-fee" value="1.5% + 380 ש״ח (+מע״מ)" oninput="queueUpdate()">
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="tel" id="in-fee-cc" placeholder="עמלה בכ״א (חתימה)" oninput="formatInput(this); queueUpdate()">
-                    <input type="tel" id="in-fee-hk" placeholder="עמלה בהוראת קבע" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-fee-cc" inputmode="decimal" placeholder="עמלה בכ״א (חתימה)" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-fee-hk" inputmode="decimal" placeholder="עמלה בהוראת קבע" oninput="formatInput(this); queueUpdate()">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="tel" id="in-to-repay" placeholder="עובר לפירעון" oninput="formatInput(this); queueUpdate()">
-                    <input type="tel" id="in-to-importer" placeholder="עובר ליבואן" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-to-repay" inputmode="decimal" placeholder="עובר לפירעון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-to-importer" inputmode="decimal" placeholder="עובר ליבואן" oninput="formatInput(this); queueUpdate()">
                 </div>
 
                 <input type="text" id="in-notes" placeholder="הערות מיוחדות" oninput="queueUpdate()">
-                
-                <button onclick="generateAIAnalysis()" class="w-full bg-slate-700 text-white py-2 rounded-lg font-bold mt-2 hover:bg-slate-600 transition-all text-sm">✨ ניתוח AI מעודן</button>
             </div>
         </div>
     </div>
@@ -300,19 +289,19 @@
                 <div class="row-item"><div class="label">מסלול ריבית</div><div class="value" id="out-rate" style="direction:ltr;">---</div></div>
             </div>
             
-            <!-- קבוצה 3: עמלות -->
+            <!-- קבוצה 3: העברות (הועברה למקום השלישי) -->
+            <div id="group-transfers" class="doc-group hidden">
+                <div class="doc-group-title">פירוט העברות כספים</div>
+                <div id="row-repay" class="row-item hidden"><div class="label">עובר לפירעון</div><div class="value" id="out-to-repay" style="direction:ltr;">0 ₪</div></div>
+                <div id="row-importer" class="row-item hidden"><div class="label">עובר ליבואן</div><div class="value" id="out-to-importer" style="direction:ltr;">0 ₪</div></div>
+            </div>
+
+            <!-- קבוצה 4: עמלות (הועברה למקום הרביעי) -->
             <div class="doc-group">
                 <div class="doc-group-title">פירוט עמלות</div>
                 <div class="row-item"><div class="label">עמלה</div><div id="out-fee" class="value">---</div></div>
                 <div id="part-cc" class="fee-sub-row hidden"><span>חלק יחסי מהעמלה יגבה בכ״א במעמד החתימה:</span> <strong id="out-fee-cc">0 ₪</strong></div>
                 <div id="part-hk" class="fee-sub-row hidden"><span>החלק הנוסף יגבה בהוראת קבע:</span> <strong id="out-fee-hk">0 ₪</strong></div>
-            </div>
-
-            <!-- קבוצה 4: העברות -->
-            <div id="group-transfers" class="doc-group hidden">
-                <div class="doc-group-title">פירוט העברות כספים</div>
-                <div id="row-repay" class="row-item hidden"><div class="label">עובר לפירעון</div><div class="value" id="out-to-repay" style="direction:ltr;">0 ₪</div></div>
-                <div id="row-importer" class="row-item hidden"><div class="label">עובר ליבואן</div><div class="value" id="out-to-importer" style="direction:ltr;">0 ₪</div></div>
             </div>
 
             <!-- קבוצה 5: הערות -->
@@ -321,19 +310,10 @@
                 <div class="notes-content" id="out-notes"></div>
             </div>
 
-            <div id="ai-analysis-container" class="hidden mt-4 mb-4">
-                <div class="p-4 bg-slate-50 rounded-lg border-r-4 border-brand-gold">
-                    <div id="ai-content" class="text-[14px] font-semibold text-slate-700 italic"></div>
-                </div>
-            </div>
-
             <div class="doc-footer-legal">
                 • הרכב נרשם על שם הלקוח ומשועבד לגוף המממן בלבד • בכפוף לתנאי החיתום • ט.ל.ח
-                <div class="doc-contact-bar">
-                    <span>📞 03-5031503</span>
-                    <span>✉️ office@credible.co.il</span>
-                    <span>🌐 www.credible.co.il</span>
-                </div>
+                <br>
+                • ההצעה תקפה ליום שליחת מסמך זה •
             </div>
         </div>
     </div>
@@ -438,31 +418,21 @@
             else document.getElementById('row-notes').classList.add('hidden');
         }
 
-        async function generateAIAnalysis() {
-            const prompt = `כתוב ניתוח פיננסי מקצועי (עד 20 מילים) להצעה: סכום ${document.getElementById('out-amount').innerText}, החזר ${document.getElementById('out-monthly').innerText}.`;
-            try {
-                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                const res = await r.json();
-                document.getElementById('ai-analysis-container').classList.remove('hidden');
-                document.getElementById('ai-content').innerText = res.candidates?.[0]?.content?.parts?.[0]?.text;
-                queueUpdate();
-            } catch(e) {}
-        }
-
         async function handleShare() {
             try {
+                const name = document.getElementById('out-name').innerText.trim() || "לקוח";
                 if (!lastBlob) {
                     const el = document.getElementById('document-area');
                     const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
                     lastBlob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));
                 }
-                const name = document.getElementById('out-name').innerText.trim() || "לקוח";
                 const file = new File([lastBlob], `הצעה_ל-${name}.png`, { type: 'image/png' });
                 if (navigator.share) {
-                    await navigator.share({ files: [file], title: 'קרדיבל פלוס - הצעה' });
+                    await navigator.share({ 
+                        files: [file], 
+                        title: 'קרדיבל פלוס - הצעה',
+                        text: `סיכום פרטי הלוואה - ${name}`
+                    });
                 }
             } catch (err) {}
         }
@@ -475,3 +445,4 @@
     </script>
 </body>
 </html>
+
