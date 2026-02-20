@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Credible Plus - Updated Order</title>
-    
+    <title>Credible Plus - סיכום תנאי מימון</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
     <style>
         :root {
             --brand-gold: #c5a059;
+            --brand-gold-light: #d4b47a;
             --text-dark: #1e293b;
             --text-muted: #64748b;
-            --bg-dark: #0f172a;
+            --bg-dark: #0a1628;
+            --bg-card: #111e35;
+            --border-dark: #1e3352;
             --border-primary: #e2e8f0;
-            --accent-gold: #eab308;
+            --accent-gold: #c5a059;
         }
 
-        html, body { 
-            overflow-x: hidden; 
+        * { box-sizing: border-box; }
+
+        html, body {
+            overflow-x: hidden;
             width: 100%;
             background-color: var(--bg-dark);
             margin: 0;
@@ -29,129 +32,216 @@
             font-family: 'Assistant', sans-serif;
         }
 
-        /* Agent UI */
-        .agent-ui { 
-            background: var(--bg-dark); 
-            color: white; 
-            padding: 20px; 
-            border-bottom: 2px solid var(--brand-gold);
+        /* ─── Agent UI ─── */
+        .agent-ui {
+            background: var(--bg-dark);
+            color: white;
+            padding: 20px 16px 24px;
+            border-bottom: 1px solid var(--border-dark);
             width: 100%;
-            box-sizing: border-box;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
         }
 
-        .agent-ui input, .agent-ui select { 
-            background: #1e293b; 
-            border: 1px solid #334155; 
-            color: white; 
-            border-radius: 8px; 
-            padding: 10px; 
-            width: 100%; 
-            margin-top: 4px; 
-            font-size: 15px;
+        .agent-ui input,
+        .agent-ui select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dark);
+            color: white;
+            border-radius: 10px;
+            padding: 11px 13px;
+            width: 100%;
+            margin-top: 0;
+            font-size: 14px;
             text-align: right;
             outline: none;
+            font-family: 'Assistant', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
         }
 
-        .top-bar { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 15px;
+        .agent-ui input::placeholder { color: #445570; }
+        .agent-ui input:focus,
+        .agent-ui select:focus {
+            border-color: var(--brand-gold);
+            box-shadow: 0 0 0 3px rgba(197,160,89,0.12);
         }
+
+        .agent-ui select { cursor: pointer; }
+        .agent-ui select option { background: #111e35; }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.03em;
+        }
+        .logo-text span { color: var(--brand-gold); }
 
         .share-btn-top {
-            background: var(--brand-gold);
-            color: #000;
-            padding: 8px 20px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, var(--brand-gold), #a8833a);
+            color: #fff;
+            padding: 9px 22px;
+            border-radius: 22px;
             font-weight: 700;
             cursor: pointer;
             border: none;
             font-size: 14px;
+            font-family: 'Assistant', sans-serif;
+            letter-spacing: 0.02em;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(197,160,89,0.3);
+        }
+        .share-btn-top:hover { opacity: 0.9; transform: translateY(-1px); }
+        .share-btn-top:active { transform: translateY(0); }
+
+        .field-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #445570;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            display: block;
+            margin-bottom: 4px;
+            padding-right: 2px;
         }
 
-        /* Document Area */
+        .field-group { display: flex; flex-direction: column; gap: 4px; }
+
+        /* ─── Document Render Area ─── */
         #render-wrap {
-            background: #f1f5f9;
+            background: #e8edf4;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(197,160,89,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(197,160,89,0.03) 0%, transparent 50%);
             width: 100%;
             display: flex;
             justify-content: center;
-            padding: 40px 0;
+            padding: 40px 16px;
+            min-height: calc(100vh - 200px);
         }
 
-        #document-area { 
-            background: white; 
-            width: 595px; 
-            min-height: 842px; 
-            padding: 45px 40px; 
+        #document-area {
+            background: white;
+            width: 595px;
+            max-width: 100%;
+            min-height: 842px;
+            padding: 48px 44px;
             box-sizing: border-box;
             direction: rtl;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 4px;
         }
 
-        .doc-header-meta {
+        /* ─── Document Header ─── */
+        .doc-header-top {
             display: flex;
             justify-content: space-between;
-            width: 100%;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .doc-logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.03em;
+        }
+        .doc-logo span { color: var(--accent-gold); }
+
+        .doc-meta-right {
+            text-align: left;
             font-size: 11px;
-            font-weight: 600;
             color: #94a3b8;
-            margin-bottom: 25px;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+
+        .doc-divider {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-gold) 0%, #e8d5b0 60%, transparent 100%);
+            margin-bottom: 28px;
         }
 
         .title-wrapper {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 32px;
         }
 
         .doc-main-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             color: var(--text-dark);
-            border-bottom: 4px solid var(--accent-gold);
-            display: inline-block;
-            padding-bottom: 6px;
-            letter-spacing: -0.01em;
+            letter-spacing: -0.02em;
         }
 
-        /* Groups and Rows */
+        .doc-main-subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* ─── Document Groups ─── */
         .doc-group {
             border: 1.5px solid var(--border-primary);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 16px 20px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             background-color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-group::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent-gold), #e8d5b0);
+            border-radius: 0 10px 10px 0;
         }
 
         .doc-group-title {
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 800;
-            color: var(--brand-gold);
+            color: var(--accent-gold);
             text-transform: uppercase;
-            margin-bottom: 10px;
-            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            letter-spacing: 0.08em;
         }
 
         .row-item {
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 10px 0;
-            gap: 15px;
-            white-space: nowrap;
+            padding: 9px 0;
+            gap: 12px;
         }
 
         .row-item:not(:last-child) {
-            border-bottom: 1px solid #f8fafc;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .row-item .label {
             color: var(--text-muted);
             font-weight: 600;
-            font-size: 14.5px;
+            font-size: 14px;
             flex-shrink: 0;
             line-height: 1.4;
         }
@@ -159,21 +249,27 @@
         .row-item .value {
             color: var(--text-dark);
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15.5px;
             text-align: left;
             flex-grow: 1;
             line-height: 1.4;
-            padding-bottom: 2px;
         }
 
-        /* Fee Specific Rows within Group */
+        /* Highlight row for monthly payment */
+        .row-highlight .label { color: #334155; font-weight: 700; }
+        .row-highlight .value {
+            color: #0f172a;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
         .fee-sub-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            margin-top: 8px;
-            border-top: 1px solid #f8fafc;
+            padding: 9px 0;
+            margin-top: 4px;
+            border-top: 1px solid #f1f5f9;
             font-size: 13px;
             color: var(--text-muted);
             font-weight: 500;
@@ -185,264 +281,568 @@
             color: var(--text-dark);
             font-weight: 800;
             direction: ltr;
-            margin-right: 8px;
-            padding-bottom: 2px;
+            display: inline-block;
         }
 
-        /* Notes */
         .notes-content {
-            font-size: 14.5px;
+            font-size: 14px;
             color: #475569;
-            line-height: 1.6;
+            line-height: 1.7;
             font-weight: 500;
             word-wrap: break-word;
-            white-space: normal; 
+            white-space: pre-wrap;
         }
 
-        .doc-footer-legal { 
+        .doc-footer-legal {
             margin-top: auto;
-            font-size: 10.5px; 
-            color: #94a3b8; 
-            padding: 25px 0 15px 0; 
+            font-size: 10px;
+            color: #b0bec5;
+            padding: 22px 0 10px;
             text-align: center;
-            line-height: 1.8;
-            border-top: 1px solid #f8fafc;
+            line-height: 2;
+            border-top: 1px solid #f1f5f9;
         }
 
         .hidden { display: none !important; }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 640px) {
+            #document-area { padding: 32px 24px; }
+            .agent-ui { padding: 16px 12px 20px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="agent-ui">
-        <div class="max-w-md mx-auto">
-            <div class="top-bar">
-                <h2 class="text-xl font-black text-white">Credible<span class="text-[#c5a059]">plus</span></h2>
-                <button id="btn-share" onclick="handleShare()" class="share-btn-top">שתף הצעה</button>
+<div class="agent-ui">
+    <div class="max-w-md mx-auto">
+        <div class="top-bar">
+            <div style="height:36px; display:flex; align-items:center;">
+                <svg style="height:36px; width:auto;" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 301.68 65.71">
+                  <defs>
+                    <style>.cls-1{fill:url(#linear-gradient-2)}.cls-2{fill:#f0f0f0}.cls-3{fill:url(#linear-gradient-6)}.cls-4{fill:url(#linear-gradient-5)}.cls-5{fill:url(#linear-gradient-7)}.cls-6{fill:url(#linear-gradient-3)}.cls-7{fill:url(#linear-gradient)}.cls-8{fill:url(#linear-gradient-4)}</style>
+                    <linearGradient id="linear-gradient" x1="209.98" y1="58.62" x2="301.68" y2="58.62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f6d19c"/><stop offset=".36" stop-color="#d4a55f"/><stop offset=".69" stop-color="#c89644"/><stop offset="1" stop-color="#9c7229"/></linearGradient>
+                    <linearGradient id="linear-gradient-2" x1="0" y1="58.62" x2="91.7" y2="58.62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9c7229"/><stop offset=".31" stop-color="#c89644"/><stop offset=".64" stop-color="#d4a55f"/><stop offset="1" stop-color="#f6d19c"/></linearGradient>
+                    <linearGradient id="linear-gradient-3" x1="205.46" y1="34.15" x2="234.12" y2="5.49" xlink:href="#linear-gradient-2"/>
+                    <linearGradient id="linear-gradient-4" x1="231.49" y1="36.91" x2="256.16" y2="12.23" xlink:href="#linear-gradient-2"/>
+                    <linearGradient id="linear-gradient-5" x1="253.6" y1="33.89" x2="282.52" y2="4.96" xlink:href="#linear-gradient-2"/>
+                    <linearGradient id="linear-gradient-6" x1="278.37" y1="35.09" x2="304.84" y2="8.61" xlink:href="#linear-gradient-2"/>
+                    <linearGradient id="linear-gradient-7" x1="2.17" y1="41.24" x2="41.51" y2="1.89" xlink:href="#linear-gradient-2"/>
+                  </defs>
+                  <g id="Layer_1-2" data-name="Layer 1">
+                    <g>
+                      <g>
+                        <path class="cls-2" d="m100.87,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m110.13,62.95l-3.49-5.02c-1.32.77-1.6,2.09-1.6,3.1,0,.91.17,1.38.31,1.84.05.14-.05.23-.18.23h-.68c-.15,0-.21-.09-.26-.23-.14-.43-.31-1.04-.31-1.9,0-1.46.48-3.03,2.1-3.92l-1.92-2.76c-.09-.12-.03-.25.11-.25h.86c.12,0,.18.05.26.15l3.26,4.68c1.4-.71,1.69-1.9,1.69-2.93,0-.74-.15-1.21-.29-1.69-.03-.12.04-.21.18-.21h.69c.14,0,.2.09.25.23.14.41.29,1,.29,1.78,0,1.41-.51,2.86-2.2,3.72l2.15,3.09c.09.12.03.25-.11.25h-.86c-.12,0-.18-.05-.26-.15Z"/>
+                        <path class="cls-2" d="m118.85,62.89v-5.7c0-1.44-.43-2.1-2.04-2.1h-3.49c-.14,0-.21-.08-.21-.21v-.61c0-.14.08-.21.21-.21h3.96c1.83,0,2.72,1.06,2.72,2.67v6.17c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m122.48,59.06v-4.81c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v3.62h.68c1.49,0,2.06-.52,2.06-1.78v-1.84c0-.14.08-.21.21-.21h.69c.14,0,.21.08.21.21v1.97c0,1.6-.83,2.66-2.99,2.66h-.86c.03,2.47,1.12,3.23,3.29,3.23s3.27-.78,3.27-3.35v-4.5c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v4.81c0,2.84-1.52,4.16-4.42,4.16s-4.44-1.32-4.44-4.16Z"/>
+                        <path class="cls-2" d="m139.73,62.95l-3.49-5.02c-1.32.77-1.6,2.09-1.6,3.1,0,.91.17,1.38.31,1.84.05.14-.05.23-.18.23h-.68c-.15,0-.21-.09-.26-.23-.14-.43-.31-1.04-.31-1.9,0-1.46.48-3.03,2.1-3.92l-1.92-2.76c-.09-.12-.03-.25.11-.25h.86c.12,0,.18.05.26.15l3.26,4.68c1.4-.71,1.69-1.9,1.69-2.93,0-.74-.15-1.21-.29-1.69-.03-.12.04-.21.18-.21h.69c.14,0,.2.09.25.23.14.41.29,1,.29,1.78,0,1.41-.51,2.86-2.2,3.72l2.15,3.09c.09.12.03.25-.11.25h-.86c-.12,0-.18-.05-.26-.15Z"/>
+                        <path class="cls-2" d="m146.36,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m150.2,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m154.09,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m157.53,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m161.05,62.89v-.61c0-.14.08-.21.21-.21h.17c3.41,0,4.82-2.83,4.82-6.14v-.52c0-.2-.08-.31-.28-.31h-5.1c-.34,0-.52-.21-.52-.55v-1.97c0-.14.08-.21.21-.21h.71c.14,0,.21.08.21.21v1.47h5.25c.37,0,.64.28.64.66v1.55c0,3.64-1.98,6.85-5.81,6.85h-.32c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m170.2,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m176.45,65.5v-11.24c0-.14.08-.21.22-.21h.72c.14,0,.21.08.21.21v4.87h1.15c2.13,0,2.79-.86,2.79-2.32v-2.55c0-.14.08-.21.22-.21h.72c.14,0,.21.08.21.21v2.66c0,1.77-.91,3.26-3.62,3.26h-1.47v5.33c0,.14-.08.21-.21.21h-.72c-.14,0-.22-.08-.22-.21Z"/>
+                        <path class="cls-2" d="m185.28,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m187.92,62.89v-.61c0-.14.08-.21.21-.21h2.13l-1.69-7.8c-.03-.14.08-.21.21-.21h.74c.14,0,.18.08.21.21l1.67,7.79c2.03-.18,2.92-1.44,2.92-3.49v-4.3c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v4.75c0,2.4-1.52,4.1-4.15,4.1h-3.21c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m197.71,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="cls-2" d="m201.1,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                      </g>
+                      <rect class="cls-7" x="209.98" y="58.3" width="91.7" height=".64"/>
+                      <rect class="cls-1" y="58.3" width="91.7" height=".64"/>
+                      <g>
+                        <path class="cls-2" d="m59.83.12c-6.52,0-9.2,4.63-9.2,10.78v21.81c0,6.15,2.68,10.78,9.2,10.78s9.2-4.63,9.2-10.78v-4.87h-2.68v5.06c0,4.57-1.77,7.98-6.46,7.98s-6.46-3.41-6.46-7.98V10.72c0-4.57,1.77-8.04,6.46-8.04s6.46,3.47,6.46,8.04v3.72h2.68v-3.53c0-6.15-2.68-10.78-9.2-10.78Z"/>
+                        <path class="cls-2" d="m91.63,31.38c0-4.63-1.77-7.74-6.15-8.71,4.2-.97,6.15-3.84,6.15-8.83v-3.72c0-6.03-2.62-9.63-9.14-9.63h-8.89v42.65h2.8v-19.07h4.45c4.87,0,7.98,1.58,7.98,7.25v6.7c0,2.32.18,3.84.91,5.12h2.92c-.91-1.4-1.03-3.35-1.03-5.12v-6.64Zm-15.23-9.87V3.05h6.03c4.63,0,6.4,2.74,6.4,7.31v4.02c0,5.73-2.92,7.13-7.92,7.13h-4.51Z"/>
+                        <polygon class="cls-2" points="97.11 43.13 113.93 43.13 113.93 40.58 99.91 40.58 99.91 22.79 111.55 22.79 111.55 20.23 99.91 20.23 99.91 3.05 113.93 3.05 113.93 .49 97.11 .49 97.11 43.13"/>
+                        <path class="cls-2" d="m127.88.49h-9.38v42.65h9.38c6.58,0,9.44-4.33,9.44-10.6V11.09c0-6.28-2.86-10.6-9.44-10.6Zm6.64,32.17c0,4.69-1.95,7.92-6.7,7.92h-6.52V3.05h6.52c4.69,0,6.7,3.23,6.7,7.92v21.69Z"/>
+                        <rect class="cls-2" x="141.95" y=".49" width="2.8" height="42.65"/>
+                        <path class="cls-2" d="m161.69,20.41c4.33-.91,5.61-3.78,5.61-8.41v-2.44c0-5.91-2.32-9.08-8.71-9.08h-8.96v42.65h9.14c6.52,0,9.32-3.72,9.32-9.87v-3.72c0-4.81-1.77-8.22-6.4-9.14Zm-9.26-17.36h6.09c4.57,0,5.97,2.32,5.97,6.76v2.74c0,5.42-2.32,6.76-7.31,6.76h-4.75V3.05Zm12.85,30.16c0,4.75-1.83,7.37-6.52,7.37h-6.34v-18.7h5.3c5.06,0,7.55,1.95,7.55,7.49v3.84Z"/>
+                        <polygon class="cls-2" points="175.46 .49 172.65 .49 172.65 43.13 188.86 43.13 188.86 40.58 175.46 40.58 175.46 .49"/>
+                        <polygon class="cls-2" points="209.88 3.05 209.88 .49 193.06 .49 193.06 43.13 209.88 43.13 209.88 40.58 195.87 40.58 195.87 22.79 207.5 22.79 207.5 20.23 195.87 20.23 195.87 3.05 209.88 3.05"/>
+                      </g>
+                      <g>
+                        <path class="cls-6" d="m224.32.49h-9.87v42.65h6.7v-16.02h3.17c6.7,0,9.99-3.72,9.99-10.54v-5.54c0-6.82-3.29-10.54-9.99-10.54Zm3.29,16.51c0,3.05-1.16,4.02-3.29,4.02h-3.17V6.58h3.17c2.13,0,3.29.97,3.29,4.02v6.4Z"/>
+                        <polygon class="cls-8" points="244.42 .49 237.72 .49 237.72 43.13 255.45 43.13 255.45 37.04 244.42 37.04 244.42 .49"/>
+                        <path class="cls-4" d="m271.71,33.39c0,3.05-1.34,4.14-3.47,4.14s-3.47-1.1-3.47-4.14V.49h-6.7v32.47c0,6.82,3.41,10.72,9.99,10.72s9.99-3.9,9.99-10.72V.49h-6.34v32.9Z"/>
+                        <path class="cls-3" d="m288.47,10.3c0-3.05,1.22-4.2,3.35-4.2s3.35,1.16,3.35,4.2v1.77h6.34v-1.34c0-6.82-3.35-10.72-9.87-10.72s-9.87,3.9-9.87,10.72c0,12.18,13.1,13.83,13.1,22.6,0,3.05-1.34,4.14-3.47,4.14s-3.47-1.1-3.47-4.14v-3.05h-6.34v2.62c0,6.82,3.41,10.72,9.99,10.72s9.99-3.9,9.99-10.72c0-12.18-13.1-13.83-13.1-22.6Z"/>
+                      </g>
+                      <path class="cls-5" d="m32.51,38.57h-4c-.99,0-1.79-.8-1.79-1.79v-1.55c-.03-.21-.06-.42-.06-.63v-9.22h-9.22c-.14,0-.28,0-.42-.02h-1.62c-.99,0-1.79-.8-1.79-1.79v-4c0-.99.8-1.79,1.79-1.79h11.26v-9.21c0-.22.02-.42.06-.63v-1.38c0-.99.8-1.79,1.79-1.79h4c.99,0,1.79.8,1.79,1.79v11.22h9.1V6.47c0-3.57-2.9-6.47-6.47-6.47H6.74C3.17,0,.27,2.9.27,6.47v30.2c0,3.57,2.9,6.47,6.47,6.47h30.2c3.57,0,6.47-2.9,6.47-6.47v-11.28h-9.1v11.4c0,.99-.8,1.79-1.79,1.79Z"/>
+                    </g>
+                  </g>
+                </svg>
             </div>
-            
-            <div class="space-y-2">
-                <input type="text" id="in-name" placeholder="שם הלקוח" oninput="queueUpdate()">
-                
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="tel" id="in-amount" inputmode="decimal" placeholder="סכום המימון" oninput="formatInput(this); queueUpdate()">
-                    <input type="tel" id="in-balloon" inputmode="decimal" placeholder="בלון" oninput="formatInput(this); queueUpdate()">
+            <button id="btn-share" onclick="handleShare()" class="share-btn-top">📤 שתף הצעה</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="field-group">
+                <span class="field-label">שם הלקוח</span>
+                <input type="text" id="in-name" placeholder="ישראל ישראלי" oninput="queueUpdate()">
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div class="field-group">
+                    <span class="field-label">סכום המימון ₪</span>
+                    <input type="tel" id="in-amount" inputmode="decimal" placeholder="150,000" oninput="formatInput(this); queueUpdate()">
                 </div>
-                
-                <div class="grid grid-cols-2 gap-2">
+                <div class="field-group">
+                    <span class="field-label">בלון ₪</span>
+                    <input type="tel" id="in-balloon" inputmode="decimal" placeholder="0" oninput="formatInput(this); queueUpdate()">
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div class="field-group">
+                    <span class="field-label">תקופה (חודשים)</span>
                     <input type="tel" id="in-period" inputmode="numeric" value="60" oninput="queueUpdate()">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">מסלול ריבית</span>
                     <select id="in-route-type" onchange="toggleRouteFields(); queueUpdate()">
                         <option value="prime">צמוד פריים</option>
                         <option value="index">צמוד מדד</option>
                     </select>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-2 gap-2" id="prime-fields">
+            <div id="prime-fields" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div class="field-group">
+                    <span class="field-label">בסיס פריים %</span>
                     <input type="tel" id="in-prime-base" inputmode="decimal" value="5.5" oninput="queueUpdate()">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">מרווח %</span>
                     <input type="tel" id="in-prime-margin" inputmode="decimal" value="0.5" oninput="queueUpdate()">
                 </div>
-                <div class="hidden" id="index-fields">
-                    <input type="tel" id="in-index-rate" inputmode="decimal" value="4.5" oninput="queueUpdate()">
-                </div>
+            </div>
 
-                <input type="text" id="in-fee" value="1.5% + 380 ש״ח (+מע״מ)" oninput="queueUpdate()">
-                
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="tel" id="in-fee-cc" inputmode="decimal" placeholder="עמלה בכ״א (חתימה)" oninput="formatInput(this); queueUpdate()">
-                    <input type="tel" id="in-fee-hk" inputmode="decimal" placeholder="עמלה בהוראת קבע" oninput="formatInput(this); queueUpdate()">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="tel" id="in-to-repay" inputmode="decimal" placeholder="עובר לפירעון" oninput="formatInput(this); queueUpdate()">
-                    <input type="tel" id="in-to-importer" inputmode="decimal" placeholder="עובר ליבואן" oninput="formatInput(this); queueUpdate()">
-                </div>
+            <div id="index-fields" class="hidden field-group">
+                <span class="field-label">ריבית צמוד מדד %</span>
+                <input type="tel" id="in-index-rate" inputmode="decimal" value="4.5" oninput="queueUpdate()">
+            </div>
 
-                <input type="text" id="in-notes" placeholder="הערות מיוחדות" oninput="queueUpdate()">
+            <div class="field-group">
+                <span class="field-label">עמלה</span>
+                <input type="text" id="in-fee" value='1.5% + 380 ש״ח (+מע״מ)' oninput="queueUpdate()">
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div class="field-group">
+                    <span class="field-label">עמלה בכ״א ₪</span>
+                    <input type="tel" id="in-fee-cc" inputmode="decimal" placeholder="0" oninput="formatInput(this); queueUpdate()">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">עמלה בהוראת קבע ₪</span>
+                    <input type="tel" id="in-fee-hk" inputmode="decimal" placeholder="0" oninput="formatInput(this); queueUpdate()">
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div class="field-group">
+                    <span class="field-label">עובר לפירעון ₪</span>
+                    <input type="tel" id="in-to-repay" inputmode="decimal" placeholder="0" oninput="formatInput(this); queueUpdate()">
+                </div>
+                <div class="field-group">
+                    <span class="field-label">עובר ליבואן ₪</span>
+                    <input type="tel" id="in-to-importer" inputmode="decimal" placeholder="0" oninput="formatInput(this); queueUpdate()">
+                </div>
+            </div>
+
+            <div class="field-group">
+                <span class="field-label">הערות מיוחדות</span>
+                <input type="text" id="in-notes" placeholder="הערות נוספות ללקוח..." oninput="queueUpdate()">
             </div>
         </div>
     </div>
+</div>
 
-    <div id="render-wrap">
-        <div id="document-area">
-            <div class="doc-header-meta">
-                <span>בס"ד</span>
-                <span id="display-date"></span>
-            </div>
-
-            <div class="title-wrapper">
-                <h1 class="doc-main-title">סיכום תנאי מימון רכב</h1>
-            </div>
-
-            <!-- קבוצה 1: לקוח -->
-            <div class="doc-group">
-                <div class="doc-group-title">פרטי הלקוח</div>
-                <div class="row-item"><div class="label">שם הלקוח</div><div class="value" id="out-name">---</div></div>
-            </div>
-
-            <!-- קבוצה 2: מימון -->
-            <div class="doc-group">
-                <div class="doc-group-title">פרטי המימון והחזרים</div>
-                <div class="row-item"><div class="label">סכום המימון</div><div class="value" id="out-amount" style="direction:ltr;">0 ₪</div></div>
-                <div class="row-item"><div class="label">תשלום חודשי משוער</div><div class="value" id="out-monthly" style="direction:ltr;">0 ₪</div></div>
-                <div class="row-item"><div class="label">יתרה בסוף תקופה (בלון)</div><div class="value" id="out-balloon" style="direction:ltr;">0 ₪</div></div>
-                <div class="row-item"><div class="label">תקופת הלוואה</div><div class="value" id="out-period">0 חודשים</div></div>
-                <div class="row-item"><div class="label">מסלול ריבית</div><div class="value" id="out-rate" style="direction:ltr;">---</div></div>
-            </div>
-            
-            <!-- קבוצה 3: העברות (הועברה למקום השלישי) -->
-            <div id="group-transfers" class="doc-group hidden">
-                <div class="doc-group-title">פירוט העברות כספים</div>
-                <div id="row-repay" class="row-item hidden"><div class="label">עובר לפירעון</div><div class="value" id="out-to-repay" style="direction:ltr;">0 ₪</div></div>
-                <div id="row-importer" class="row-item hidden"><div class="label">עובר ליבואן</div><div class="value" id="out-to-importer" style="direction:ltr;">0 ₪</div></div>
-            </div>
-
-            <!-- קבוצה 4: עמלות (הועברה למקום הרביעי) -->
-            <div class="doc-group">
-                <div class="doc-group-title">פירוט עמלות</div>
-                <div class="row-item"><div class="label">עמלה</div><div id="out-fee" class="value">---</div></div>
-                <div id="part-cc" class="fee-sub-row hidden"><span>חלק יחסי מהעמלה יגבה בכ״א במעמד החתימה:</span> <strong id="out-fee-cc">0 ₪</strong></div>
-                <div id="part-hk" class="fee-sub-row hidden"><span>החלק הנוסף יגבה בהוראת קבע:</span> <strong id="out-fee-hk">0 ₪</strong></div>
-            </div>
-
-            <!-- קבוצה 5: הערות -->
-            <div id="row-notes" class="doc-group hidden">
-                <div class="doc-group-title">הערות ודגשים</div>
-                <div class="notes-content" id="out-notes"></div>
-            </div>
-
-            <div class="doc-footer-legal">
-                • הרכב נרשם על שם הלקוח ומשועבד לגוף המממן בלבד • בכפוף לתנאי החיתום • ט.ל.ח
-                <br>
-                • ההצעה תקפה ליום שליחת מסמך זה •
+<div id="render-wrap">
+    <div id="document-area">
+        <!-- Header -->
+        <div style="position:relative; display:flex; align-items:center; justify-content:center; margin-bottom:25px;">
+            <div id="display-date" style="position:absolute; right:0; top:50%; transform:translateY(-50%); direction:ltr; font-size:11px; color:#94a3b8; font-weight:500;"></div>
+            <div style="height:38px; display:flex; align-items:center; justify-content:center;">
+                <svg style="height:32px; width:auto;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 301.68 65.71">
+                  <defs>
+                    <style>.dcls-1{fill:url(#dlinear-gradient-2)}.dcls-2{fill:#1e293b}.dcls-3{fill:url(#dlinear-gradient-6)}.dcls-4{fill:url(#dlinear-gradient-5)}.dcls-5{fill:url(#dlinear-gradient-7)}.dcls-6{fill:url(#dlinear-gradient-3)}.dcls-7{fill:url(#dlinear-gradient)}.dcls-8{fill:url(#dlinear-gradient-4)}</style>
+                    <linearGradient id="dlinear-gradient" x1="209.98" y1="58.62" x2="301.68" y2="58.62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f6d19c"/><stop offset=".36" stop-color="#d4a55f"/><stop offset=".69" stop-color="#c89644"/><stop offset="1" stop-color="#9c7229"/></linearGradient>
+                    <linearGradient id="dlinear-gradient-2" x1="0" y1="58.62" x2="91.7" y2="58.62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9c7229"/><stop offset=".31" stop-color="#c89644"/><stop offset=".64" stop-color="#d4a55f"/><stop offset="1" stop-color="#f6d19c"/></linearGradient>
+                    <linearGradient id="dlinear-gradient-3" x1="205.46" y1="34.15" x2="234.12" y2="5.49" xlink:href="#dlinear-gradient-2"/>
+                    <linearGradient id="dlinear-gradient-4" x1="231.49" y1="36.91" x2="256.16" y2="12.23" xlink:href="#dlinear-gradient-2"/>
+                    <linearGradient id="dlinear-gradient-5" x1="253.6" y1="33.89" x2="282.52" y2="4.96" xlink:href="#dlinear-gradient-2"/>
+                    <linearGradient id="dlinear-gradient-6" x1="278.37" y1="35.09" x2="304.84" y2="8.61" xlink:href="#dlinear-gradient-2"/>
+                    <linearGradient id="dlinear-gradient-7" x1="2.17" y1="41.24" x2="41.51" y2="1.89" xlink:href="#dlinear-gradient-2"/>
+                  </defs>
+                  <g>
+                    <g>
+                      <g>
+                        <path class="dcls-2" d="m100.87,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m110.13,62.95l-3.49-5.02c-1.32.77-1.6,2.09-1.6,3.1,0,.91.17,1.38.31,1.84.05.14-.05.23-.18.23h-.68c-.15,0-.21-.09-.26-.23-.14-.43-.31-1.04-.31-1.9,0-1.46.48-3.03,2.1-3.92l-1.92-2.76c-.09-.12-.03-.25.11-.25h.86c.12,0,.18.05.26.15l3.26,4.68c1.4-.71,1.69-1.9,1.69-2.93,0-.74-.15-1.21-.29-1.69-.03-.12.04-.21.18-.21h.69c.14,0,.2.09.25.23.14.41.29,1,.29,1.78,0,1.41-.51,2.86-2.2,3.72l2.15,3.09c.09.12.03.25-.11.25h-.86c-.12,0-.18-.05-.26-.15Z"/>
+                        <path class="dcls-2" d="m118.85,62.89v-5.7c0-1.44-.43-2.1-2.04-2.1h-3.49c-.14,0-.21-.08-.21-.21v-.61c0-.14.08-.21.21-.21h3.96c1.83,0,2.72,1.06,2.72,2.67v6.17c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m122.48,59.06v-4.81c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v3.62h.68c1.49,0,2.06-.52,2.06-1.78v-1.84c0-.14.08-.21.21-.21h.69c.14,0,.21.08.21.21v1.97c0,1.6-.83,2.66-2.99,2.66h-.86c.03,2.47,1.12,3.23,3.29,3.23s3.27-.78,3.27-3.35v-4.5c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v4.81c0,2.84-1.52,4.16-4.42,4.16s-4.44-1.32-4.44-4.16Z"/>
+                        <path class="dcls-2" d="m139.73,62.95l-3.49-5.02c-1.32.77-1.6,2.09-1.6,3.1,0,.91.17,1.38.31,1.84.05.14-.05.23-.18.23h-.68c-.15,0-.21-.09-.26-.23-.14-.43-.31-1.04-.31-1.9,0-1.46.48-3.03,2.1-3.92l-1.92-2.76c-.09-.12-.03-.25.11-.25h.86c.12,0,.18.05.26.15l3.26,4.68c1.4-.71,1.69-1.9,1.69-2.93,0-.74-.15-1.21-.29-1.69-.03-.12.04-.21.18-.21h.69c.14,0,.2.09.25.23.14.41.29,1,.29,1.78,0,1.41-.51,2.86-2.2,3.72l2.15,3.09c.09.12.03.25-.11.25h-.86c-.12,0-.18-.05-.26-.15Z"/>
+                        <path class="dcls-2" d="m146.36,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m150.2,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m154.09,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m157.53,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m161.05,62.89v-.61c0-.14.08-.21.21-.21h.17c3.41,0,4.82-2.83,4.82-6.14v-.52c0-.2-.08-.31-.28-.31h-5.1c-.34,0-.52-.21-.52-.55v-1.97c0-.14.08-.21.21-.21h.71c.14,0,.21.08.21.21v1.47h5.25c.37,0,.64.28.64.66v1.55c0,3.64-1.98,6.85-5.81,6.85h-.32c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m170.2,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m176.45,65.5v-11.24c0-.14.08-.21.22-.21h.72c.14,0,.21.08.21.21v4.87h1.15c2.13,0,2.79-.86,2.79-2.32v-2.55c0-.14.08-.21.22-.21h.72c.14,0,.21.08.21.21v2.66c0,1.77-.91,3.26-3.62,3.26h-1.47v5.33c0,.14-.08.21-.21.21h-.72c-.14,0-.22-.08-.22-.21Z"/>
+                        <path class="dcls-2" d="m185.28,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m187.92,62.89v-.61c0-.14.08-.21.21-.21h2.13l-1.69-7.8c-.03-.14.08-.21.21-.21h.74c.14,0,.18.08.21.21l1.67,7.79c2.03-.18,2.92-1.44,2.92-3.49v-4.3c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v4.75c0,2.4-1.52,4.1-4.15,4.1h-3.21c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m197.71,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                        <path class="dcls-2" d="m201.1,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
+                      </g>
+                      <rect class="dcls-7" x="209.98" y="58.3" width="91.7" height=".64"/>
+                      <rect class="dcls-1" y="58.3" width="91.7" height=".64"/>
+                      <g>
+                        <path class="dcls-2" d="m59.83.12c-6.52,0-9.2,4.63-9.2,10.78v21.81c0,6.15,2.68,10.78,9.2,10.78s9.2-4.63,9.2-10.78v-4.87h-2.68v5.06c0,4.57-1.77,7.98-6.46,7.98s-6.46-3.41-6.46-7.98V10.72c0-4.57,1.77-8.04,6.46-8.04s6.46,3.47,6.46,8.04v3.72h2.68v-3.53c0-6.15-2.68-10.78-9.2-10.78Z"/>
+                        <path class="dcls-2" d="m91.63,31.38c0-4.63-1.77-7.74-6.15-8.71,4.2-.97,6.15-3.84,6.15-8.83v-3.72c0-6.03-2.62-9.63-9.14-9.63h-8.89v42.65h2.8v-19.07h4.45c4.87,0,7.98,1.58,7.98,7.25v6.7c0,2.32.18,3.84.91,5.12h2.92c-.91-1.4-1.03-3.35-1.03-5.12v-6.64Zm-15.23-9.87V3.05h6.03c4.63,0,6.4,2.74,6.4,7.31v4.02c0,5.73-2.92,7.13-7.92,7.13h-4.51Z"/>
+                        <polygon class="dcls-2" points="97.11 43.13 113.93 43.13 113.93 40.58 99.91 40.58 99.91 22.79 111.55 22.79 111.55 20.23 99.91 20.23 99.91 3.05 113.93 3.05 113.93 .49 97.11 .49 97.11 43.13"/>
+                        <path class="dcls-2" d="m127.88.49h-9.38v42.65h9.38c6.58,0,9.44-4.33,9.44-10.6V11.09c0-6.28-2.86-10.6-9.44-10.6Zm6.64,32.17c0,4.69-1.95,7.92-6.7,7.92h-6.52V3.05h6.52c4.69,0,6.7,3.23,6.7,7.92v21.69Z"/>
+                        <rect class="dcls-2" x="141.95" y=".49" width="2.8" height="42.65"/>
+                        <path class="dcls-2" d="m161.69,20.41c4.33-.91,5.61-3.78,5.61-8.41v-2.44c0-5.91-2.32-9.08-8.71-9.08h-8.96v42.65h9.14c6.52,0,9.32-3.72,9.32-9.87v-3.72c0-4.81-1.77-8.22-6.4-9.14Zm-9.26-17.36h6.09c4.57,0,5.97,2.32,5.97,6.76v2.74c0,5.42-2.32,6.76-7.31,6.76h-4.75V3.05Zm12.85,30.16c0,4.75-1.83,7.37-6.52,7.37h-6.34v-18.7h5.3c5.06,0,7.55,1.95,7.55,7.49v3.84Z"/>
+                        <polygon class="dcls-2" points="175.46 .49 172.65 .49 172.65 43.13 188.86 43.13 188.86 40.58 175.46 40.58 175.46 .49"/>
+                        <polygon class="dcls-2" points="209.88 3.05 209.88 .49 193.06 .49 193.06 43.13 209.88 43.13 209.88 40.58 195.87 40.58 195.87 22.79 207.5 22.79 207.5 20.23 195.87 20.23 195.87 3.05 209.88 3.05"/>
+                      </g>
+                      <g>
+                        <path class="dcls-6" d="m224.32.49h-9.87v42.65h6.7v-16.02h3.17c6.7,0,9.99-3.72,9.99-10.54v-5.54c0-6.82-3.29-10.54-9.99-10.54Zm3.29,16.51c0,3.05-1.16,4.02-3.29,4.02h-3.17V6.58h3.17c2.13,0,3.29.97,3.29,4.02v6.4Z"/>
+                        <polygon class="dcls-8" points="244.42 .49 237.72 .49 237.72 43.13 255.45 43.13 255.45 37.04 244.42 37.04 244.42 .49"/>
+                        <path class="dcls-4" d="m271.71,33.39c0,3.05-1.34,4.14-3.47,4.14s-3.47-1.1-3.47-4.14V.49h-6.7v32.47c0,6.82,3.41,10.72,9.99,10.72s9.99-3.9,9.99-10.72V.49h-6.34v32.9Z"/>
+                        <path class="dcls-3" d="m288.47,10.3c0-3.05,1.22-4.2,3.35-4.2s3.35,1.16,3.35,4.2v1.77h6.34v-1.34c0-6.82-3.35-10.72-9.87-10.72s-9.87,3.9-9.87,10.72c0,12.18,13.1,13.83,13.1,22.6,0,3.05-1.34,4.14-3.47,4.14s-3.47-1.1-3.47-4.14v-3.05h-6.34v2.62c0,6.82,3.41,10.72,9.99,10.72s9.99-3.9,9.99-10.72c0-12.18-13.1-13.83-13.1-22.6Z"/>
+                      </g>
+                      <path class="dcls-5" d="m32.51,38.57h-4c-.99,0-1.79-.8-1.79-1.79v-1.55c-.03-.21-.06-.42-.06-.63v-9.22h-9.22c-.14,0-.28,0-.42-.02h-1.62c-.99,0-1.79-.8-1.79-1.79v-4c0-.99.8-1.79,1.79-1.79h11.26v-9.21c0-.22.02-.42.06-.63v-1.38c0-.99.8-1.79,1.79-1.79h4c.99,0,1.79.8,1.79,1.79v11.22h9.1V6.47c0-3.57-2.9-6.47-6.47-6.47H6.74C3.17,0,.27,2.9.27,6.47v30.2c0,3.57,2.9,6.47,6.47,6.47h30.2c3.57,0,6.47-2.9,6.47-6.47v-11.28h-9.1v11.4c0,.99-.8,1.79-1.79,1.79Z"/>
+                    </g>
+                  </g>
+                </svg>
             </div>
         </div>
+        <div class="doc-divider"></div>
+
+        <div class="title-wrapper">
+            <div class="doc-main-title">סיכום תנאי מימון רכב</div>
+            <div class="doc-main-subtitle">הצעה מותאמת אישית</div>
+        </div>
+
+        <!-- Group 1: Client -->
+        <div class="doc-group">
+            <div class="doc-group-title">פרטי הלקוח</div>
+            <div class="row-item">
+                <div class="label">שם הלקוח</div>
+                <div class="value" id="out-name">—</div>
+            </div>
+        </div>
+
+        <!-- Group 2: Financing -->
+        <div class="doc-group">
+            <div class="doc-group-title">פרטי המימון והחזרים</div>
+            <div class="row-item">
+                <div class="label">סכום המימון</div>
+                <div class="value" id="out-amount" style="direction:ltr;">0 ₪</div>
+            </div>
+            <div class="row-item row-highlight">
+                <div class="label">תשלום חודשי משוער</div>
+                <div class="value" id="out-monthly" style="direction:ltr;">0 ₪</div>
+            </div>
+            <div class="row-item">
+                <div class="label">יתרה בסוף תקופה (בלון)</div>
+                <div class="value" id="out-balloon" style="direction:ltr;">0 ₪</div>
+            </div>
+            <div class="row-item">
+                <div class="label">תקופת הלוואה</div>
+                <div class="value" id="out-period">0 חודשים</div>
+            </div>
+            <div class="row-item">
+                <div class="label">מסלול ריבית</div>
+                <div class="value" id="out-rate" style="direction:ltr;">—</div>
+            </div>
+        </div>
+
+        <!-- Group 3: Transfers -->
+        <div id="group-transfers" class="doc-group hidden">
+            <div class="doc-group-title">פירוט העברות כספים</div>
+            <div id="row-repay" class="row-item hidden">
+                <div class="label">עובר לפירעון</div>
+                <div class="value" id="out-to-repay" style="direction:ltr;">0 ₪</div>
+            </div>
+            <div id="row-importer" class="row-item hidden">
+                <div class="label">עובר ליבואן</div>
+                <div class="value" id="out-to-importer" style="direction:ltr;">0 ₪</div>
+            </div>
+        </div>
+
+        <!-- Group 4: Fees -->
+        <div class="doc-group">
+            <div class="doc-group-title">פירוט עמלות</div>
+            <div class="row-item">
+                <div class="label">עמלה</div>
+                <div id="out-fee" class="value">—</div>
+            </div>
+            <div id="part-cc" class="fee-sub-row hidden">
+                <span>חלק יחסי מהעמלה יגבה בכ״א במעמד החתימה:</span>
+                <strong id="out-fee-cc">0 ₪</strong>
+            </div>
+            <div id="part-hk" class="fee-sub-row hidden">
+                <span>החלק הנוסף יגבה בהוראת קבע:</span>
+                <strong id="out-fee-hk">0 ₪</strong>
+            </div>
+        </div>
+
+        <!-- Group 5: Notes -->
+        <div id="row-notes" class="doc-group hidden">
+            <div class="doc-group-title">הערות ודגשים</div>
+            <div class="notes-content" id="out-notes"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="doc-footer-legal">
+            • הרכב נרשם על שם הלקוח ומשועבד לגוף המממן בלבד &nbsp;•&nbsp; בכפוף לתנאי החיתום •
+            <br>
+            • ההצעה תקפה ליום שליחת מסמך זה •
+            <br>
+            מסמך זה אינו מהווה הצעה מחייבת או התחייבות למתן מימון, והכול כפוף לאישור ולחתימה על הסכם מימון מחייב.
+        </div>
     </div>
+</div>
 
-    <script>
-        const apiKey = "";
-        let lastBlob = null;
-        let updateTimeout = null;
+<script>
+    let lastBlob = null;
+    let updateTimeout = null;
 
-        function formatInput(el) {
-            let v = el.value.replace(/,/g, '');
-            if(!isNaN(v) && v !== "") el.value = parseFloat(v).toLocaleString('en-US');
+    function formatInput(el) {
+        let v = el.value.replace(/,/g, '');
+        if (!isNaN(v) && v !== '') el.value = parseFloat(v).toLocaleString('en-US');
+    }
+
+    function getVal(id) {
+        return document.getElementById(id).value.replace(/,/g, '') || 0;
+    }
+
+    function formatNum(n) {
+        return '₪\u202F' + Math.round(n).toLocaleString('en-US');
+    }
+
+    function toggleRouteFields() {
+        const t = document.getElementById('in-route-type').value;
+        document.getElementById('prime-fields').classList.toggle('hidden', t !== 'prime');
+        document.getElementById('index-fields').classList.toggle('hidden', t !== 'index');
+    }
+
+    function queueUpdate() {
+        update();
+        clearTimeout(updateTimeout);
+        updateTimeout = setTimeout(preRender, 900);
+    }
+
+    async function preRender() {
+        try {
+            const el = document.getElementById('document-area');
+            const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
+            lastBlob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));
+        } catch (e) { console.warn('preRender:', e); }
+    }
+
+    function update() {
+        const amount = parseFloat(getVal('in-amount')) || 0;
+        const period = parseInt(getVal('in-period')) || 1;
+        const balloon = parseFloat(getVal('in-balloon')) || 0;
+        const type = document.getElementById('in-route-type').value;
+
+        let totalRate = 0, rateText = '';
+        if (type === 'prime') {
+            const base = parseFloat(document.getElementById('in-prime-base').value) || 0;
+            const margin = parseFloat(document.getElementById('in-prime-margin').value) || 0;
+            totalRate = base + margin;
+            const marginStr = margin >= 0 ? `+${margin}` : `${margin}`;
+            rateText = `<bdi>(P${marginStr}%)</bdi> ${totalRate.toFixed(2)}%`;
+        } else {
+            totalRate = parseFloat(document.getElementById('in-index-rate').value) || 0;
+            rateText = `צמוד מדד ${totalRate}%`;
         }
 
-        function getVal(id) { return document.getElementById(id).value.replace(/,/g, '') || 0; }
-        function formatNum(n) { return "₪ " + Math.round(n).toLocaleString('en-US'); }
-
-        function toggleRouteFields() {
-            const t = document.getElementById('in-route-type').value;
-            document.getElementById('prime-fields').classList.toggle('hidden', t !== 'prime');
-            document.getElementById('index-fields').classList.toggle('hidden', t !== 'index');
-        }
-
-        function queueUpdate() {
-            update();
-            clearTimeout(updateTimeout);
-            updateTimeout = setTimeout(preRender, 800);
-        }
-
-        async function preRender() {
-            try {
-                const el = document.getElementById('document-area');
-                const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
-                canvas.toBlob(blob => { lastBlob = blob; }, 'image/png', 1.0);
-            } catch(e) {}
-        }
-
-        function update() {
-            const amount = parseFloat(getVal('in-amount'));
-            const period = parseInt(getVal('in-period')) || 1;
-            const balloon = parseFloat(getVal('in-balloon'));
-            const type = document.getElementById('in-route-type').value;
-            
-            let totalRate = 0, rateText = "";
-            if(type === 'prime') {
-                const base = parseFloat(document.getElementById('in-prime-base').value) || 0;
-                const margin = parseFloat(document.getElementById('in-prime-margin').value) || 0;
-                totalRate = (base + margin).toFixed(2);
-                const marginStr = margin >= 0 ? `+${margin}` : `${margin}`;
-                rateText = `<bdi>(P${marginStr}%)</bdi> ${totalRate}%`;
-            } else {
-                totalRate = parseFloat(document.getElementById('in-index-rate').value) || 0;
-                rateText = `צמוד מדד ${totalRate}%`;
-            }
-
-            const mRate = (parseFloat(totalRate)/100)/12;
-            const bPV = balloon / Math.pow(1+mRate, period);
+        const mRate = (totalRate / 100) / 12;
+        let monthly = 0;
+        if (amount > 0) {
+            const bPV = balloon / Math.pow(1 + mRate, period);
             const lAmt = amount - bPV;
-            const monthly = mRate === 0 ? lAmt/period : lAmt * (mRate * Math.pow(1+mRate, period)) / (Math.pow(1+mRate, period) - 1);
+            monthly = mRate === 0
+                ? lAmt / period
+                : lAmt * (mRate * Math.pow(1 + mRate, period)) / (Math.pow(1 + mRate, period) - 1);
+        }
 
-            document.getElementById('out-name').innerText = document.getElementById('in-name').value || "---";
-            document.getElementById('out-amount').innerText = formatNum(amount);
-            document.getElementById('out-monthly').innerText = formatNum(monthly);
-            document.getElementById('out-balloon').innerText = formatNum(balloon);
-            document.getElementById('out-period').innerText = period + " חודשים";
-            document.getElementById('out-rate').innerHTML = rateText;
-            
-            document.getElementById('out-fee').innerText = document.getElementById('in-fee').value || "---";
+        document.getElementById('out-name').innerText = document.getElementById('in-name').value || '—';
+        document.getElementById('out-amount').innerText = formatNum(amount);
+        document.getElementById('out-monthly').innerText = formatNum(monthly);
+        document.getElementById('out-balloon').innerText = formatNum(balloon);
+        document.getElementById('out-period').innerText = period + ' חודשים';
+        document.getElementById('out-rate').innerHTML = rateText;
+        document.getElementById('out-fee').innerText = document.getElementById('in-fee').value || '—';
 
-            const feeCC = parseFloat(getVal('in-fee-cc'));
-            const feeHK = parseFloat(getVal('in-fee-hk'));
-            
-            if(feeCC > 0) {
-                document.getElementById('part-cc').classList.remove('hidden');
-                document.getElementById('out-fee-cc').innerText = formatNum(feeCC);
-            } else document.getElementById('part-cc').classList.add('hidden');
-            
-            if(feeHK > 0) {
-                document.getElementById('part-hk').classList.remove('hidden');
-                document.getElementById('out-fee-hk').innerText = formatNum(feeHK);
-            } else document.getElementById('part-hk').classList.add('hidden');
+        const feeCC = parseFloat(getVal('in-fee-cc')) || 0;
+        const feeHK = parseFloat(getVal('in-fee-hk')) || 0;
 
-            const toRepay = parseFloat(getVal('in-to-repay'));
-            const toImporter = parseFloat(getVal('in-to-importer'));
-            if(toRepay > 0 || toImporter > 0) {
-                document.getElementById('group-transfers').classList.remove('hidden');
-                if(toRepay > 0) {
-                    document.getElementById('row-repay').classList.remove('hidden');
-                    document.getElementById('out-to-repay').innerText = formatNum(toRepay);
-                } else document.getElementById('row-repay').classList.add('hidden');
-                
-                if(toImporter > 0) {
-                    document.getElementById('row-importer').classList.remove('hidden');
-                    document.getElementById('out-to-importer').innerText = formatNum(toImporter);
-                } else document.getElementById('row-importer').classList.add('hidden');
-            } else {
-                document.getElementById('group-transfers').classList.add('hidden');
+        document.getElementById('part-cc').classList.toggle('hidden', feeCC <= 0);
+        if (feeCC > 0) document.getElementById('out-fee-cc').innerText = formatNum(feeCC);
+
+        document.getElementById('part-hk').classList.toggle('hidden', feeHK <= 0);
+        if (feeHK > 0) document.getElementById('out-fee-hk').innerText = formatNum(feeHK);
+
+        const toRepay = parseFloat(getVal('in-to-repay')) || 0;
+        const toImporter = parseFloat(getVal('in-to-importer')) || 0;
+        const showTransfers = toRepay > 0 || toImporter > 0;
+        document.getElementById('group-transfers').classList.toggle('hidden', !showTransfers);
+
+        document.getElementById('row-repay').classList.toggle('hidden', toRepay <= 0);
+        if (toRepay > 0) document.getElementById('out-to-repay').innerText = formatNum(toRepay);
+
+        document.getElementById('row-importer').classList.toggle('hidden', toImporter <= 0);
+        if (toImporter > 0) document.getElementById('out-to-importer').innerText = formatNum(toImporter);
+
+        const n = document.getElementById('in-notes').value;
+        document.getElementById('row-notes').classList.toggle('hidden', !n);
+        if (n) document.getElementById('out-notes').innerText = n;
+    }
+
+    async function handleShare() {
+        const btn = document.getElementById('btn-share');
+        const originalText = btn.textContent;
+        btn.textContent = '⏳ מכין...';
+        btn.disabled = true;
+
+        try {
+            const name = document.getElementById('out-name').innerText.trim() || 'לקוח';
+            const el = document.getElementById('document-area');
+            const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
+            const dataUrl = canvas.toDataURL('image/png', 1.0);
+            lastBlob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));
+
+            // Try native share first (works on HTTPS)
+            const file = new File([lastBlob], `הצעה_ל-${name}.png`, { type: 'image/png' });
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({ files: [file], title: 'קרדיבל פלוס', text: `סיכום פרטי הלוואה - ${name}` });
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                } catch(e) {
+                    if (e.name === 'AbortError') {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                        return;
+                    }
+                }
             }
 
-            const n = document.getElementById('in-notes').value;
-            if(n) { document.getElementById('row-notes').classList.remove('hidden'); document.getElementById('out-notes').innerText = n; }
-            else document.getElementById('row-notes').classList.add('hidden');
-        }
+            // Fallback: open image in new tab — works inside WhatsApp WebView
+            // User can long-press to save/share from there
+            showImageOverlay(dataUrl, name);
 
-        async function handleShare() {
-            try {
-                const name = document.getElementById('out-name').innerText.trim() || "לקוח";
-                if (!lastBlob) {
-                    const el = document.getElementById('document-area');
-                    const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
-                    lastBlob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));
-                }
-                const file = new File([lastBlob], `הצעה_ל-${name}.png`, { type: 'image/png' });
-                if (navigator.share) {
-                    await navigator.share({ 
-                        files: [file], 
-                        title: 'קרדיבל פלוס - הצעה',
-                        text: `סיכום פרטי הלוואה - ${name}`
-                    });
-                }
-            } catch (err) {}
+        } catch(err) {
+            console.warn(err);
+            showToast('שגיאה בייצור התמונה');
+        } finally {
+            btn.textContent = originalText;
+            btn.disabled = false;
         }
-        
-        window.onload = () => { 
-            document.getElementById('display-date').innerText = new Date().toLocaleDateString('he-IL');
-            update(); 
-            setTimeout(preRender, 1500);
-        };
-    </script>
+    }
+
+    function showImageOverlay(dataUrl, name) {
+        // Remove existing overlay if any
+        const existing = document.getElementById('img-overlay');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'img-overlay';
+        overlay.style.cssText = `
+            position:fixed; inset:0; background:rgba(0,0,0,0.92);
+            z-index:9999; display:flex; flex-direction:column;
+            align-items:center; justify-content:flex-start;
+            overflow-y:auto; padding:16px;
+        `;
+
+        // Header bar
+        const header = document.createElement('div');
+        header.style.cssText = `
+            width:100%; max-width:560px; display:flex;
+            justify-content:space-between; align-items:center;
+            margin-bottom:14px; flex-shrink:0;
+        `;
+
+        const tip = document.createElement('div');
+        tip.style.cssText = `color:#c5a059; font-family:'Assistant',sans-serif; font-size:15px; font-weight:700;`;
+        tip.textContent = '📲 לחץ לחיצה ארוכה על התמונה לשיתוף';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = '✕';
+        closeBtn.style.cssText = `
+            background:#1e293b; border:1px solid #334155; color:white;
+            border-radius:50%; width:36px; height:36px; font-size:16px;
+            cursor:pointer; font-family:'Assistant',sans-serif; flex-shrink:0;
+        `;
+        closeBtn.onclick = () => overlay.remove();
+
+        header.appendChild(tip);
+        header.appendChild(closeBtn);
+
+        // Image
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        img.style.cssText = `
+            width:100%; max-width:560px; border-radius:8px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.5);
+            display:block;
+        `;
+        img.alt = `הצעה_ל-${name}`;
+
+        // Download button as extra option
+        const dlBtn = document.createElement('a');
+        dlBtn.href = dataUrl;
+        dlBtn.download = `הצעה_ל-${name}.png`;
+        dlBtn.style.cssText = `
+            margin-top:16px; background:linear-gradient(135deg,#c5a059,#a8833a);
+            color:white; padding:12px 32px; border-radius:24px;
+            font-family:'Assistant',sans-serif; font-size:15px; font-weight:700;
+            text-decoration:none; flex-shrink:0;
+        `;
+        dlBtn.textContent = '⬇️ הורד תמונה';
+
+        overlay.appendChild(header);
+        overlay.appendChild(img);
+        overlay.appendChild(dlBtn);
+        document.body.appendChild(overlay);
+
+        // Close on background tap
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.remove();
+        });
+    }
+
+    function showToast(msg) {
+        let t = document.getElementById('toast');
+        if (!t) {
+            t = document.createElement('div');
+            t.id = 'toast';
+            t.style.cssText = `
+                position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+                background:#1e293b; color:#fff; padding:12px 24px; border-radius:24px;
+                font-family:'Assistant',sans-serif; font-size:15px; font-weight:600;
+                z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,0.3);
+                border:1px solid #c5a059; white-space:nowrap; transition:opacity 0.4s;
+            `;
+            document.body.appendChild(t);
+        }
+        t.textContent = msg;
+        t.style.opacity = '1';
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+    }
+
+    window.onload = () => {
+        document.getElementById('display-date').innerText = new Date().toLocaleDateString('he-IL');
+        update();
+        setTimeout(preRender, 1500);
+    };
+</script>
 </body>
 </html>
-
