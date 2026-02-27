@@ -1,1 +1,447 @@
+‏<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Credible Plus - Updated Order</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --brand-gold: #c5a059;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --bg-dark: #0f172a;
+            --border-primary: #e2e8f0;
+            --accent-gold: #eab308;
+        }
+
+        html, body { 
+            overflow-x: hidden; 
+            width: 100%;
+            background-color: var(--bg-dark);
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            font-family: 'Assistant', sans-serif;
+        }
+
+        /* Agent UI */
+        .agent-ui { 
+            background: var(--bg-dark); 
+            color: white; 
+            padding: 20px; 
+            border-bottom: 2px solid var(--brand-gold);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .agent-ui input, .agent-ui select { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            color: white; 
+            border-radius: 8px; 
+            padding: 10px; 
+            width: 100%; 
+            margin-top: 4px; 
+            font-size: 15px;
+            text-align: right;
+            outline: none;
+        }
+
+        .top-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px;
+        }
+
+        .share-btn-top {
+            background: var(--brand-gold);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+
+        /* Document Area */
+        #render-wrap {
+            background: #f1f5f9;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        #document-area { 
+            background: white; 
+            width: 595px; 
+            min-height: 842px; 
+            padding: 45px 40px; 
+            box-sizing: border-box;
+            direction: rtl;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .doc-header-meta {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+
+        .title-wrapper {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .doc-main-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            border-bottom: 4px solid var(--accent-gold);
+            display: inline-block;
+            padding-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        /* Groups and Rows */
+        .doc-group {
+            border: 1.5px solid var(--border-primary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background-color: #ffffff;
+        }
+
+        .doc-group-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.05em;
+        }
+
+        .row-item {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            width: 100%;
+            padding: 10px 0;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .row-item:not(:last-child) {
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .row-item .label {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14.5px;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        .row-item .value {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 16px;
+            text-align: left;
+            flex-grow: 1;
+            line-height: 1.4;
+            padding-bottom: 2px;
+        }
+
+        /* Fee Specific Rows within Group */
+        .fee-sub-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-top: 8px;
+            border-top: 1px solid #f8fafc;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+            line-height: 1.4;
+        }
+
+        .fee-sub-row strong {
+            color: var(--text-dark);
+            font-weight: 800;
+            direction: ltr;
+            margin-right: 8px;
+            padding-bottom: 2px;
+        }
+
+        /* Notes */
+        .notes-content {
+            font-size: 14.5px;
+            color: #475569;
+            line-height: 1.6;
+            font-weight: 500;
+            word-wrap: break-word;
+            white-space: normal; 
+        }
+
+        .doc-footer-legal { 
+            margin-top: auto;
+            font-size: 10.5px; 
+            color: #94a3b8; 
+            padding: 25px 0 15px 0; 
+            text-align: center;
+            line-height: 1.8;
+            border-top: 1px solid #f8fafc;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="agent-ui">
+        <div class="max-w-md mx-auto">
+            <div class="top-bar">
+                <h2 class="text-xl font-black text-white">Credible<span class="text-[#c5a059]">plus</span></h2>
+                <button id="btn-share" onclick="handleShare()" class="share-btn-top">שתף הצעה</button>
+            </div>
+            
+            <div class="space-y-2">
+                <input type="text" id="in-name" placeholder="שם הלקוח" oninput="queueUpdate()">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-amount" inputmode="decimal" placeholder="סכום המימון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-balloon" inputmode="decimal" placeholder="בלון" oninput="formatInput(this); queueUpdate()">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-period" inputmode="numeric" value="60" oninput="queueUpdate()">
+                    <select id="in-route-type" onchange="toggleRouteFields(); queueUpdate()">
+                        <option value="prime">צמוד פריים</option>
+                        <option value="index">צמוד מדד</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2" id="prime-fields">
+                    <input type="tel" id="in-prime-base" inputmode="decimal" value="5.5" oninput="queueUpdate()">
+                    <input type="tel" id="in-prime-margin" inputmode="decimal" value="0.5" oninput="queueUpdate()">
+                </div>
+                <div class="hidden" id="index-fields">
+                    <input type="tel" id="in-index-rate" inputmode="decimal" value="4.5" oninput="queueUpdate()">
+                </div>
+
+                <input type="text" id="in-fee" value="1.5% + 380 ש״ח (+מע״מ)" oninput="queueUpdate()">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-fee-cc" inputmode="decimal" placeholder="עמלה בכ״א (חתימה)" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-fee-hk" inputmode="decimal" placeholder="עמלה בהוראת קבע" oninput="formatInput(this); queueUpdate()">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-to-repay" inputmode="decimal" placeholder="עובר לפירעון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-to-importer" inputmode="decimal" placeholder="עובר ליבואן" oninput="formatInput(this); queueUpdate()">
+                </div>
+
+                <input type="text" id="in-notes" placeholder="הערות מיוחדות" oninput="queueUpdate()">
+            </div>
+        </div>
+    </div>
+
+    <div id="render-wrap">
+        <div id="document-area">
+            <div class="doc-header-meta">
+                <span>בס"ד</span>
+                <span id="display-date"></span>
+            </div>
+
+            <div class="title-wrapper">
+                <h1 class="doc-main-title">סיכום תנאי מימון רכב</h1>
+            </div>
+
+            <!-- קבוצה 1: לקוח -->
+            <div class="doc-group">
+                <div class="doc-group-title">פרטי הלקוח</div>
+                <div class="row-item"><div class="label">שם הלקוח</div><div class="value" id="out-name">---</div></div>
+            </div>
+
+            <!-- קבוצה 2: מימון -->
+            <div class="doc-group">
+                <div class="doc-group-title">פרטי המימון והחזרים</div>
+                <div class="row-item"><div class="label">סכום המימון</div><div class="value" id="out-amount" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">תשלום חודשי משוער</div><div class="value" id="out-monthly" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">יתרה בסוף תקופה (בלון)</div><div class="value" id="out-balloon" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">תקופת הלוואה</div><div class="value" id="out-period">0 חודשים</div></div>
+                <div class="row-item"><div class="label">מסלול ריבית</div><div class="value" id="out-rate" style="direction:ltr;">---</div></div>
+            </div>
+            
+            <!-- קבוצה 3: העברות (הועברה למקום השלישי) -->
+            <div id="group-transfers" class="doc-group hidden">
+                <div class="doc-group-title">פירוט העברות כספים</div>
+                <div id="row-repay" class="row-item hidden"><div class="label">עובר לפירעון</div><div class="value" id="out-to-repay" style="direction:ltr;">0 ₪</div></div>
+                <div id="row-importer" class="row-item hidden"><div class="label">עובר ליבואן</div><div class="value" id="out-to-importer" style="direction:ltr;">0 ₪</div></div>
+            </div>
+
+            <!-- קבוצה 4: עמלות (הועברה למקום הרביעי) -->
+            <div class="doc-group">
+                <div class="doc-group-title">פירוט עמלות</div>
+                <div class="row-item"><div class="label">עמלה</div><div id="out-fee" class="value">---</div></div>
+                <div id="part-cc" class="fee-sub-row hidden"><span>חלק יחסי מהעמלה יגבה בכ״א במעמד החתימה:</span> <strong id="out-fee-cc">0 ₪</strong></div>
+                <div id="part-hk" class="fee-sub-row hidden"><span>החלק הנוסף יגבה בהוראת קבע:</span> <strong id="out-fee-hk">0 ₪</strong></div>
+            </div>
+
+            <!-- קבוצה 5: הערות -->
+            <div id="row-notes" class="doc-group hidden">
+                <div class="doc-group-title">הערות ודגשים</div>
+                <div class="notes-content" id="out-notes"></div>
+            </div>
+
+            <div class="doc-footer-legal">
+‎                • הרכב נרשם על שם הלקוח ומשועבד לגוף המממן בלבד • בכפוף לתנאי החיתום • ט.ל.ח
+                <br>
+‎                • ההצעה תקפה ליום שליחת מסמך זה •
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "";
+        let lastBlob = null;
+        let updateTimeout = null;
+
+        function formatInput(el) {
+            let v = el.value.replace(/,/g, '');
+            if(!isNaN(v) && v !== "") el.value = parseFloat(v).toLocaleString('en-US');
+        }
+
+        function getVal(id) { return document.getElementById(id).value.replace(/,/g, '') || 0; }
+        function formatNum(n) { return "₪ " + Math.round(n).toLocaleString('en-US'); }
+
+        function toggleRouteFields() {
+            const t = document.getElementById('in-route-type').value;
+            document.getElementById('prime-fields').classList.toggle('hidden', t !== 'prime');
+            document.getElementById('index-fields').classList.toggle('hidden', t !== 'index');
+        }
+
+        function queueUpdate() {
+            update();
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(preRender, 800);
+        }
+
+        async function preRender() {
+            try {
+                const el = document.getElementById('document-area');
+                const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+                canvas.toBlob(blob => { lastBlob = blob; }, 'image/png', 1.0);
+            } catch(e) {}
+        }
+
+        function update() {
+            const amount = parseFloat(getVal('in-amount'));
+            const period = parseInt(getVal('in-period')) || 1;
+            const balloon = parseFloat(getVal('in-balloon'));
+            const type = document.getElementById('in-route-type').value;
+            
+            let totalRate = 0, rateText = "";
+            if(type === 'prime') {
+                const base = parseFloat(document.getElementById('in-prime-base').value) || 0;
+                const margin = parseFloat(document.getElementById('in-prime-margin').value) || 0;
+                totalRate = (base + margin).toFixed(2);
+                const marginStr = margin >= 0 ? `+${margin}` : `${margin}`;
+                rateText = `<bdi>(P${marginStr}%)</bdi> ${totalRate}%`;
+            } else {
+                totalRate = parseFloat(document.getElementById('in-index-rate').value) || 0;
+                rateText = `צמוד מדד ${totalRate}%`;
+            }
+
+            const mRate = (parseFloat(totalRate)/100)/12;
+            const bPV = balloon / Math.pow(1+mRate, period);
+            const lAmt = amount - bPV;
+            const monthly = mRate === 0 ? lAmt/period : lAmt * (mRate * Math.pow(1+mRate, period)) / (Math.pow(1+mRate, period) - 1);
+
+            document.getElementById('out-name').innerText = document.getElementById('in-name').value || "---";
+            document.getElementById('out-amount').innerText = formatNum(amount);
+            document.getElementById('out-monthly').innerText = formatNum(monthly);
+            document.getElementById('out-balloon').innerText = formatNum(balloon);
+            document.getElementById('out-period').innerText = period + " חודשים";
+            document.getElementById('out-rate').innerHTML = rateText;
+            
+            document.getElementById('out-fee').innerText = document.getElementById('in-fee').value || "---";
+
+            const feeCC = parseFloat(getVal('in-fee-cc'));
+            const feeHK = parseFloat(getVal('in-fee-hk'));
+            
+            if(feeCC > 0) {
+                document.getElementById('part-cc').classList.remove('hidden');
+                document.getElementById('out-fee-cc').innerText = formatNum(feeCC);
+            } else document.getElementById('part-cc').classList.add('hidden');
+            
+            if(feeHK > 0) {
+                document.getElementById('part-hk').classList.remove('hidden');
+                document.getElementById('out-fee-hk').innerText = formatNum(feeHK);
+            } else document.getElementById('part-hk').classList.add('hidden');
+
+            const toRepay = parseFloat(getVal('in-to-repay'));
+            const toImporter = parseFloat(getVal('in-to-importer'));
+            if(toRepay > 0 || toImporter > 0) {
+                document.getElementById('group-transfers').classList.remove('hidden');
+                if(toRepay > 0) {
+                    document.getElementById('row-repay').classList.remove('hidden');
+                    document.getElementById('out-to-repay').innerText = formatNum(toRepay);
+                } else document.getElementById('row-repay').classList.add('hidden');
+                
+                if(toImporter > 0) {
+                    document.getElementById('row-importer').classList.remove('hidden');
+                    document.getElementById('out-to-importer').innerText = formatNum(toImporter);
+                } else document.getElementById('row-importer').classList.add('hidden');
+            } else {
+                document.getElementById('group-transfers').classList.add('hidden');
+            }
+
+            const n = document.getElementById('in-notes').value;
+            if(n) { document.getElementById('row-notes').classList.remove('hidden'); document.getElementById('out-notes').innerText = n; }
+            else document.getElementById('row-notes').classList.add('hidden');
+        }
+
+        async function handleShare() {
+            try {
+                const name = document.getElementById('out-name').innerText.trim() || "לקוח";
+                if (!lastBlob) {
+                    const el = document.getElementById('document-area');
+                    const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+                    lastBlob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));
+                }
+                const file = new File([lastBlob], `הצעה_ל-${name}.png`, { type: 'image/png' });
+                if (navigator.share) {
+                    await navigator.share({ 
+                        files: [file], 
+                        title: 'קרדיבל פלוס - הצעה',
+                        text: `סיכום פרטי הלוואה - ${name}`
+                    });
+                }
+            } catch (err) {}
+        }
+        
+        window.onload = () => { 
+            document.getElementById('display-date').innerText = new Date().toLocaleDateString('he-IL');
+            update(); 
+            setTimeout(preRender, 1500);
+        };
+    </script>
+</body>
 
