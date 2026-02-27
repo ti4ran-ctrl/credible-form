@@ -1,920 +1,447 @@
-<!DOCTYPE html>
-
+‏<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Credible Plus | ניהול לקוחות</title>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        input, textarea, select, button {
-            font-size: 16px;
-            -webkit-text-size-adjust: 100%;
-        }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        html { touch-action: pan-y; overflow: hidden; }
-        body { overflow: hidden; max-width: 100vw; }
-        html, body {
-            font-family: 'Assistant', sans-serif;
-            background-color: #F4F4F6;
-            touch-action: manipulation;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            position: fixed;
-            top: 0; left: 0;
-        }
-        #app {
-            height: 100%;
-            width: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
-            overscroll-behavior: none;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Credible Plus - Updated Order</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --brand-gold: #c5a059;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --bg-dark: #0f172a;
+            --border-primary: #e2e8f0;
+            --accent-gold: #eab308;
+        }
 
-```
-    /* Colors */
-    .gold-text { color: #d4a55f; }
-    .gold-bg { background: linear-gradient(90deg, #9c7229 0%, #d4a55f 50%, #f6d19c 100%); }
+        html, body { 
+            overflow-x: hidden; 
+            width: 100%;
+            background-color: var(--bg-dark);
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            font-family: 'Assistant', sans-serif;
+        }
 
-    /* Input */
-    .input-field {
-        background: #fff;
-        border: 1.5px solid #E5E7EB;
-        border-radius: 12px;
-        padding: 11px 12px;
-        font-size: 16px;
-        width: 100%;
-        outline: none;
-        transition: all .2s;
-        text-align: right;
-        appearance: none;
-        font-family: 'Assistant', sans-serif;
-        color: #262626;
-    }
-    .input-field:focus { border-color: #d4a55f; box-shadow: 0 0 0 3px rgba(212,165,95,.12); }
+        /* Agent UI */
+        .agent-ui { 
+            background: var(--bg-dark); 
+            color: white; 
+            padding: 20px; 
+            border-bottom: 2px solid var(--brand-gold);
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-    /* Layout */
-    header {
-        background: #fff;
-        padding: 10px 16px 10px;
-        position: sticky; top: 0; z-index: 50;
-        border-bottom: 1px solid #f0ece6;
-        box-shadow: 0 1px 8px rgba(0,0,0,.06);
-    }
-    main { padding: 12px 12px 24px; max-width: 500px; margin: 0 auto; }
-    footer {
-        position: sticky; bottom: 0; left: 0; right: 0;
-        background: rgba(255,255,255,.95);
-        backdrop-filter: blur(8px);
-        padding: 8px;
-        border-top: 1px solid #f0ece6;
-        text-align: center;
-        font-size: 10px;
-        color: #aaa;
-        z-index: 40;
-    }
+        .agent-ui input, .agent-ui select { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            color: white; 
+            border-radius: 8px; 
+            padding: 10px; 
+            width: 100%; 
+            margin-top: 4px; 
+            font-size: 15px;
+            text-align: right;
+            outline: none;
+        }
 
-    /* Stats */
-    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-top: 10px; max-width: 500px; }
-    .stat-card { border-radius: 12px; padding: 6px 4px; text-align: center; cursor: pointer; user-select: none; }
-    .stat-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; }
-    .stat-val { font-size: 15px; font-weight: 900; margin-top: 1px; }
-    .stat-green { background: #f0fdf4; border: 1px solid #bbf7d0; }
-    .stat-green .stat-label { color: #16a34a; }
-    .stat-green .stat-val { color: #15803d; }
-    .stat-amber { background: #fffbeb; border: 1px solid #fde68a; }
-    .stat-amber .stat-label { color: #d97706; }
-    .stat-amber .stat-val { color: #b45309; }
-    .stat-purple { background: #faf5ff; border: 1px solid #e9d5ff; }
-    .stat-purple .stat-label { color: #7c3aed; }
-    .stat-purple .stat-val { color: #6d28d9; }
-    .stat-red { background: #fef2f2; border: 1px solid #fecaca; }
-    .stat-red .stat-label { color: #dc2626; }
-    .stat-red .stat-val { color: #b91c1c; }
+        .top-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px;
+        }
 
-    /* Tabs */
-    .tabs { display: flex; background: #f3f4f6; border-radius: 12px; padding: 3px; margin-top: 10px; max-width: 500px; }
-    .tab-btn {
-        flex: 1; padding: 7px; border-radius: 9px; font-size: 12px; font-weight: 800;
-        border: none; background: transparent; cursor: pointer; transition: all .2s; color: #9ca3af;
-        font-family: 'Assistant', sans-serif;
-    }
-    .tab-btn.active { background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.1); color: #262626; }
+        .share-btn-top {
+            background: var(--brand-gold);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
 
-    /* Form card */
-    .form-card {
-        background: #fff;
-        border-radius: 18px;
-        padding: 16px;
-        margin-bottom: 14px;
-        border: 1.5px solid #ede8e0;
-        box-shadow: 0 2px 10px rgba(0,0,0,.06);
-    }
-    .form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        /* Document Area */
+        #render-wrap {
+            background: #f1f5f9;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 40px 0;
+        }
 
-    /* Button */
-    .btn-gold {
-        width: 100%; padding: 13px;
-        border-radius: 12px; border: none;
-        font-size: 16px; font-weight: 800; color: #fff;
-        cursor: pointer; margin-top: 8px;
-        font-family: 'Assistant', sans-serif;
-        background: linear-gradient(90deg, #9c7229 0%, #d4a55f 50%, #f6d19c 100%);
-        box-shadow: 0 3px 12px rgba(180,130,60,.25);
-        transition: opacity .2s;
-    }
-    .btn-gold:disabled { opacity: .35; cursor: not-allowed; }
+        #document-area { 
+            background: white; 
+            width: 595px; 
+            min-height: 842px; 
+            padding: 45px 40px; 
+            box-sizing: border-box;
+            direction: rtl;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
 
-    /* Client card */
-    .client-card {
-        background: #fff;
-        border-radius: 18px;
-        border: 2px solid #e5ddd2;
-        box-shadow: 0 3px 14px rgba(0,0,0,.08);
-        overflow: hidden;
-        margin-bottom: 12px;
-        animation: slideUp .25s ease-out;
-    }
-    @keyframes slideUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .doc-header-meta {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
 
-    .card-header {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 10px 14px;
-        background: #FAFAFA;
-        border-bottom: 1px solid #f0ede8;
-    }
-    .card-header-left { display: flex; align-items: center; gap: 8px; }
-    .card-num { font-size: 16px; font-weight: 900; color: #d9d3cb; }
-    .card-client-label { font-size: 9px; color: #aaa; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; }
-    .card-client-name { font-size: 16px; font-weight: 900; color: #1a1a1a; line-height: 1.1; }
-    .card-agency-label { font-size: 9px; color: #aaa; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; text-align: left; }
-    .card-agency-badge {
-        font-size: 11px; font-weight: 800; color: #555;
-        background: #fff; border: 1px solid #ddd; border-radius: 20px;
-        padding: 2px 8px; display: inline-block;
-    }
-    .card-header-right { display: flex; align-items: center; gap: 10px; }
-    .arrow-btns { display: flex; flex-direction: column; gap: 2px; }
-    .arrow-btn { background: none; border: none; cursor: pointer; padding: 2px; color: #ccc; line-height: 1; }
-    .arrow-btn:active { color: #333; }
+        .title-wrapper {
+            text-align: center;
+            margin-bottom: 35px;
+        }
 
-    /* Offers */
-    .offers-wrap { padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; }
-    .offer-row {
-        background: #f9f9f9;
-        border: 1.5px solid #ebebeb;
-        border-radius: 12px;
-        padding: 9px 10px;
-    }
-    .offer-grid {
-        display: grid;
-        grid-template-columns: 14px 1fr 1fr 1fr 1.1fr;
-        gap: 4px;
-        align-items: center;
-        text-align: center;
-    }
-    .offer-idx { font-size: 9px; font-weight: 800; color: #ccc; }
-    .offer-body { font-size: 12px; font-weight: 900; text-align: right; color: #1a1a1a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .offer-amount { font-size: 12px; font-weight: 900; color: #1a1a1a; }
-    .offer-approved { font-size: 11px; font-weight: 800; color: #d4a55f; }
-    .status-btn {
-        padding: 6px 4px; border-radius: 8px; font-size: 9px; font-weight: 900;
-        border: 1.5px solid; cursor: pointer; font-family: 'Assistant', sans-serif;
-        transition: all .15s; line-height: 1.2;
-    }
-    .s-submitted { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-    .s-approved { background: #f0fdf4; color: #15803d; border-color: #86efac; }
-    .s-partial { background: #fffbeb; color: #b45309; border-color: #fde68a; }
-    .s-rejected { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
-    .s-meeting { background: #faf5ff; color: #6d28d9; border-color: #ddd6fe; }
+        .doc-main-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            border-bottom: 4px solid var(--accent-gold);
+            display: inline-block;
+            padding-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
 
-    .status-picker {
-        margin-top: 8px; padding-top: 8px;
-        border-top: 1px solid #f0f0f0;
-        display: grid; grid-template-columns: repeat(3,1fr); gap: 5px;
-        animation: slideUp .2s ease-out;
-    }
-    .status-pick-btn {
-        padding: 7px 2px; border-radius: 8px; font-size: 9px; font-weight: 800;
-        border: 1.5px solid; cursor: pointer; font-family: 'Assistant', sans-serif;
-        transition: all .15s;
-    }
+        /* Groups and Rows */
+        .doc-group {
+            border: 1.5px solid var(--border-primary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background-color: #ffffff;
+        }
 
-    .partial-input {
-        font-size: 16px; padding: 4px 5px;
-        background: #fff9f0; border: 1.5px solid #f6d19c;
-        border-radius: 8px; color: #d4a55f; font-weight: 800;
-        text-align: center; width: 100%; outline: none;
-        font-family: 'Assistant', sans-serif;
-    }
+        .doc-group-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.05em;
+        }
 
-    /* Notes */
-    .notes-toggle {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 6px 14px;
-        font-size: 11px; font-weight: 800; color: #b0a090;
-        cursor: pointer; background: none; border: none; width: 100%;
-        font-family: 'Assistant', sans-serif; text-align: right;
-    }
-    .notes-toggle:active { color: #888; }
-    .notes-dot { width: 6px; height: 6px; background: #d4a55f; border-radius: 50%; display: inline-block; margin-right: 4px; }
-    .notes-area-wrap { padding: 0 10px 8px; animation: slideUp .2s ease-out; }
-    textarea.notes-area {
-        width: 100%; background: #fffdf8;
-        border: 1.5px solid #f0e4cc; border-radius: 10px;
-        padding: 8px 10px; font-size: 16px;
-        font-family: 'Assistant', sans-serif;
-        color: #555; resize: none; outline: none;
-        transition: border-color .2s;
-        text-align: right; line-height: 1.5;
-    }
-    textarea.notes-area:focus { border-color: #d4a55f; box-shadow: 0 0 0 2px rgba(212,165,95,.1); }
-    textarea.notes-area::placeholder { color: #c9b08a; }
+        .row-item {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            width: 100%;
+            padding: 10px 0;
+            gap: 15px;
+            white-space: nowrap;
+        }
 
-    /* Card actions */
-    .card-actions { display: flex; gap: 8px; padding: 6px 10px 12px; }
-    .btn-secondary {
-        flex: 1; padding: 9px; border-radius: 12px;
-        font-size: 11px; font-weight: 800;
-        border: 1.5px solid; cursor: pointer;
-        font-family: 'Assistant', sans-serif;
-        transition: all .15s;
-    }
-    .btn-gold-soft { background: #fffbf0; color: #d4a55f; border-color: #f6d19c; }
-    .btn-gold-soft:active { background: #fef3d6; }
-    .btn-gray-soft { background: #f7f7f7; color: #888; border-color: #e5e5e5; }
-    .btn-gray-soft:active { background: #eee; }
+        .row-item:not(:last-child) {
+            border-bottom: 1px solid #f8fafc;
+        }
 
-    /* Modal */
-    .modal-overlay {
-        position: fixed; inset: 0; z-index: 200;
-        background: rgba(0,0,0,.5); backdrop-filter: blur(3px);
-        display: flex; align-items: center; justify-content: center;
-        padding: 16px;
-        animation: fadeIn .2s ease-out;
-    }
-    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-    .modal-box {
-        background: #fff; border-radius: 20px;
-        width: 100%; max-width: 300px;
-        padding: 20px 16px 16px;
-        box-shadow: 0 20px 60px rgba(0,0,0,.2);
-        animation: slideUp .25s ease-out;
-    }
-    .modal-title {
-        text-align: center; font-size: 14px; font-weight: 900;
-        color: #1a1a1a; padding-bottom: 12px; margin-bottom: 10px;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    .modal-btn {
-        width: 100%; padding: 12px; border-radius: 12px;
-        font-size: 16px; font-weight: 800; cursor: pointer;
-        font-family: 'Assistant', sans-serif;
-        border: 1.5px solid; margin-bottom: 7px;
-        transition: all .15s;
-    }
-    .modal-btn-gold { background: linear-gradient(90deg,#9c7229,#d4a55f,#f6d19c); color: #fff; border-color: transparent; }
-    .modal-btn-default { background: #f7f7f7; color: #555; border-color: #e5e5e5; }
-    .modal-btn-cancel { width: 100%; padding: 8px; border: none; background: none; font-size: 11px; font-weight: 800; color: #bbb; cursor: pointer; font-family: 'Assistant', sans-serif; margin-top: 2px; }
+        .row-item .label {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14.5px;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
 
-    /* Dropdown */
-    .dropdown-wrap { position: relative; margin-bottom: 8px; }
-    .dropdown-btn {
-        width: 100%; background: #fff; border: 1.5px solid #E5E7EB;
-        border-radius: 12px; padding: 11px 12px;
-        font-size: 16px; font-weight: 700;
-        display: flex; justify-content: space-between; align-items: center;
-        cursor: pointer; font-family: 'Assistant', sans-serif;
-        text-align: right; color: #262626;
-        transition: border-color .2s;
-    }
-    .dropdown-btn.placeholder { color: #9ca3af; font-weight: 400; }
-    .dropdown-btn:focus { outline: none; border-color: #d4a55f; }
-    .dropdown-list {
-        position: absolute; z-index: 100; top: calc(100% + 4px); left: 0; right: 0;
-        background: #fff; border: 1px solid #f0ece6;
-        border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.12);
-        max-height: 200px; overflow-y: auto;
-        animation: slideUp .2s ease-out;
-    }
-    .dropdown-item {
-        width: 100%; text-align: right; padding: 11px 14px;
-        font-size: 16px; font-weight: 800; color: #555;
-        background: none; border: none; cursor: pointer;
-        font-family: 'Assistant', sans-serif;
-        border-bottom: 1px solid #f9f7f4;
-        transition: background .15s;
-    }
-    .dropdown-item:last-child { border-bottom: none; }
-    .dropdown-item:active, .dropdown-item.selected { background: #fffbf0; color: #d4a55f; }
+        .row-item .value {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 16px;
+            text-align: left;
+            flex-grow: 1;
+            line-height: 1.4;
+            padding-bottom: 2px;
+        }
 
-    .chevron { width: 16px; height: 16px; transition: transform .2s; flex-shrink: 0; }
-    .chevron.open { transform: rotate(180deg); }
+        /* Fee Specific Rows within Group */
+        .fee-sub-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-top: 8px;
+            border-top: 1px solid #f8fafc;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+            line-height: 1.4;
+        }
 
-    .search-wrap { margin-bottom: 10px; }
+        .fee-sub-row strong {
+            color: var(--text-dark);
+            font-weight: 800;
+            direction: ltr;
+            margin-right: 8px;
+            padding-bottom: 2px;
+        }
 
-    .empty-msg { text-align: center; padding: 40px 0; color: #bbb; font-size: 13px; font-weight: 700; }
+        /* Notes */
+        .notes-content {
+            font-size: 14.5px;
+            color: #475569;
+            line-height: 1.6;
+            font-weight: 500;
+            word-wrap: break-word;
+            white-space: normal; 
+        }
 
-    /* Amount input */
-    .amount-input {
-        text-align: center; font-size: 18px; font-weight: 900;
-        color: #d4a55f; margin-bottom: 0;
-    }
-</style>
-```
+        .doc-footer-legal { 
+            margin-top: auto;
+            font-size: 10.5px; 
+            color: #94a3b8; 
+            padding: 25px 0 15px 0; 
+            text-align: center;
+            line-height: 1.8;
+            border-top: 1px solid #f8fafc;
+        }
 
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
 
-<div id="app"></div>
-
-<script>
-// ─── DATA ───────────────────────────────────────────────────────────────────
-const BODIES = ['מקס','מימון ישיר','כאל','איגוד','פמה','פועלים','מזרחי','דיסקונט'];
-const STATUSES = [
-    { value:'הוגש',       cls:'s-submitted' },
-    { value:'מאושר מלא',  cls:'s-approved'  },
-    { value:'מאושר חלקי', cls:'s-partial'   },
-    { value:'לא מאושר',   cls:'s-rejected'  },
-    { value:'תואם פגישה', cls:'s-meeting'   },
-];
-function getStatusCls(v) { return (STATUSES.find(s=>s.value===v)||{cls:'s-submitted'}).cls; }
-
-const STORAGE_KEY = 'credible_plus_v4';
-
-function loadData() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; }
-}
-function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
-
-function fmtNum(n) {
-    if (n === '' || n === null || n === undefined) return '';
-    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-function parseNum(s) { return s.replace(/,/g,''); }
-function genId() { return 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2,7); }
-
-// ─── STATE ──────────────────────────────────────────────────────────────────
-let state = {
-    requests: loadData(),
-    tab: 'active',
-    search: '',
-    form: { client:'', agency:'', amount:'', body:'' },
-    activeOffer: null,   // {reqId, offId}
-    openNotes: {},       // reqId -> bool
-    dropdownOpen: false,
-    modal: null,         // {title, options:[{label,cls,fn}]}
-    bodyListOpen: false,
-    statusFilter: null,  // null = show all, else filter by status value
-};
-
-// ─── RENDER ──────────────────────────────────────────────────────────────────
-const app = document.getElementById('app');
-
-function render() {
-    app.innerHTML = '';
-    app.appendChild(buildHeader());
-    app.appendChild(buildMain());
-    app.appendChild(buildFooter());
-    if (state.modal) app.appendChild(buildModal());
-}
-
-// ─── HEADER ─────────────────────────────────────────────────────────────────
-function buildHeader() {
-    const h = el('header');
-
-    // Logo SVG
-    h.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 301.68 65.71" style="height:30px;display:block;margin:0 auto">
-    <defs>
-      <linearGradient id="g1" x1="209.98" y1="58.62" x2="301.68" y2="58.62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f6d19c"/><stop offset=".36" stop-color="#d4a55f"/><stop offset=".69" stop-color="#c89644"/><stop offset="1" stop-color="#9c7229"/></linearGradient>
-      <linearGradient id="g2" x1="0" y1="58.62" x2="91.7" y2="58.62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9c7229"/><stop offset=".31" stop-color="#c89644"/><stop offset=".64" stop-color="#d4a55f"/><stop offset="1" stop-color="#f6d19c"/></linearGradient>
-      <linearGradient id="g3" x1="205.46" y1="34.15" x2="234.12" y2="5.49" xlink:href="#g2"/>
-      <linearGradient id="g4" x1="231.49" y1="36.91" x2="256.16" y2="12.23" xlink:href="#g2"/>
-      <linearGradient id="g5" x1="253.6" y1="33.89" x2="282.52" y2="4.96" xlink:href="#g2"/>
-      <linearGradient id="g6" x1="278.37" y1="35.09" x2="304.84" y2="8.61" xlink:href="#g2"/>
-      <linearGradient id="g7" x1="2.17" y1="41.24" x2="41.51" y2="1.89" xlink:href="#g2"/>
-    </defs>
-    <rect fill="url(#g1)" x="209.98" y="58.3" width="91.7" height=".64"/>
-    <rect fill="url(#g2)" y="58.3" width="91.7" height=".64"/>
-    <path fill="#262626" d="m100.87,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m110.13,62.95l-3.49-5.02c-1.32.77-1.6,2.09-1.6,3.1,0,.91.17,1.38.31,1.84.05.14-.05.23-.18.23h-.68c-.15,0-.21-.09-.26-.23-.14-.43-.31-1.04-.31-1.9,0-1.46.48-3.03,2.1-3.92l-1.92-2.76c-.09-.12-.03-.25.11-.25h.86c.12,0,.18.05.26.15l3.26,4.68c1.4-.71,1.69-1.9,1.69-2.93,0-.74-.15-1.21-.29-1.69-.03-.12.04-.21.18-.21h.69c.14,0,.2.09.25.23.14.41.29,1,.29,1.78,0,1.41-.51,2.86-2.2,3.72l2.15,3.09c.09.12.03.25-.11.25h-.86c-.12,0-.18-.05-.26-.15Z"/>
-    <path fill="#262626" d="m118.85,62.89v-5.7c0-1.44-.43-2.1-2.04-2.1h-3.49c-.14,0-.21-.08-.21-.21v-.61c0-.14.08-.21.21-.21h3.96c1.83,0,2.72,1.06,2.72,2.67v6.17c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m122.48,59.06v-4.81c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v3.62h.68c1.49,0,2.06-.52,2.06-1.78v-1.84c0-.14.08-.21.21-.21h.69c.14,0,.21.08.21.21v1.97c0,1.6-.83,2.66-2.99,2.66h-.86c.03,2.47,1.12,3.23,3.29,3.23s3.27-.78,3.27-3.35v-4.5c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v4.81c0,2.84-1.52,4.16-4.42,4.16s-4.44-1.32-4.44-4.16Z"/>
-    <path fill="#262626" d="m139.73,62.95l-3.49-5.02c-1.32.77-1.6,2.09-1.6,3.1,0,.91.17,1.38.31,1.84.05.14-.05.23-.18.23h-.68c-.15,0-.21-.09-.26-.23-.14-.43-.31-1.04-.31-1.9,0-1.46.48-3.03,2.1-3.92l-1.92-2.76c-.09-.12-.03-.25.11-.25h.86c.12,0,.18.05.26.15l3.26,4.68c1.4-.71,1.69-1.9,1.69-2.93,0-.74-.15-1.21-.29-1.69-.03-.12.04-.21.18-.21h.69c.14,0,.2.09.25.23.14.41.29,1,.29,1.78,0,1.41-.51,2.86-2.2,3.72l2.15,3.09c.09.12.03.25-.11.25h-.86c-.12,0-.18-.05-.26-.15Z"/>
-    <path fill="#262626" d="m146.36,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m150.2,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m154.09,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m157.53,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m161.05,62.89v-.61c0-.14.08-.21.21-.21h.17c3.41,0,4.82-2.83,4.82-6.14v-.52c0-.2-.08-.31-.28-.31h-5.1c-.34,0-.52-.21-.52-.55v-1.97c0-.14.08-.21.21-.21h.71c.14,0,.21.08.21.21v1.47h5.25c.37,0,.64.28.64.66v1.55c0,3.64-1.98,6.85-5.81,6.85h-.32c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m170.2,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m176.45,65.5v-11.24c0-.14.08-.21.22-.21h.72c.14,0,.21.08.21.21v4.87h1.15c2.13,0,2.79-.86,2.79-2.32v-2.55c0-.14.08-.21.22-.21h.72c.14,0,.21.08.21.21v2.66c0,1.77-.91,3.26-3.62,3.26h-1.47v5.33c0,.14-.08.21-.21.21h-.72c-.14,0-.22-.08-.22-.21Z"/>
-    <path fill="#262626" d="m185.28,62.89v-7.33c0-.37-.12-.49-.46-.49h-.58c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h1.11c.68,0,1.09.35,1.09,1.03v7.82c0,.14-.08.21-.21.21h-.72c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m187.92,62.89v-.61c0-.14.08-.21.21-.21h2.13l-1.69-7.8c-.03-.14.08-.21.21-.21h.74c.14,0,.18.08.21.21l1.67,7.79c2.03-.18,2.92-1.44,2.92-3.49v-4.3c0-.14.08-.21.21-.21h.72c.14,0,.21.08.21.21v4.75c0,2.4-1.52,4.1-4.15,4.1h-3.21c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m197.71,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m201.1,59.41v-3.86c0-.37-.12-.49-.46-.49h-.14c-.14,0-.2-.08-.2-.21v-.6c0-.14.06-.21.2-.21h.61c.68,0,1.11.35,1.11,1.03v4.35c0,.14-.08.21-.21.21h-.69c-.14,0-.21-.08-.21-.21Z"/>
-    <path fill="#262626" d="m59.83.12c-6.52,0-9.2,4.63-9.2,10.78v21.81c0,6.15,2.68,10.78,9.2,10.78s9.2-4.63,9.2-10.78v-4.87h-2.68v5.06c0,4.57-1.77,7.98-6.46,7.98s-6.46-3.41-6.46-7.98V10.72c0-4.57,1.77-8.04,6.46-8.04s6.46,3.47,6.46,8.04v3.72h2.68v-3.53c0-6.15-2.68-10.78-9.2-10.78Z"/>
-    <path fill="#262626" d="m91.63,31.38c0-4.63-1.77-7.74-6.15-8.71,4.2-.97,6.15-3.84,6.15-8.83v-3.72c0-6.03-2.62-9.63-9.14-9.63h-8.89v42.65h2.8v-19.07h4.45c4.87,0,7.98,1.58,7.98,7.25v6.7c0,2.32.18,3.84.91,5.12h2.92c-.91-1.4-1.03-3.35-1.03-5.12v-6.64Zm-15.23-9.87V3.05h6.03c4.63,0,6.4,2.74,6.4,7.31v4.02c0,5.73-2.92,7.13-7.92,7.13h-4.51Z"/>
-    <polygon fill="#262626" points="97.11 43.13 113.93 43.13 113.93 40.58 99.91 40.58 99.91 22.79 111.55 22.79 111.55 20.23 99.91 20.23 99.91 3.05 113.93 3.05 113.93 .49 97.11 .49 97.11 43.13"/>
-    <path fill="#262626" d="m127.88.49h-9.38v42.65h9.38c6.58,0,9.44-4.33,9.44-10.6V11.09c0-6.28-2.86-10.6-9.44-10.6Zm6.64,32.17c0,4.69-1.95,7.92-6.7,7.92h-6.52V3.05h6.52c4.69,0,6.7,3.23,6.7,7.92v21.69Z"/>
-    <rect fill="#262626" x="141.95" y=".49" width="2.8" height="42.65"/>
-    <path fill="#262626" d="m161.69,20.41c4.33-.91,5.61-3.78,5.61-8.41v-2.44c0-5.91-2.32-9.08-8.71-9.08h-8.96v42.65h9.14c6.52,0,9.32-3.72,9.32-9.87v-3.72c0-4.81-1.77-8.22-6.4-9.14Zm-9.26-17.36h6.09c4.57,0,5.97,2.32,5.97,6.76v2.74c0,5.42-2.32,6.76-7.31,6.76h-4.75V3.05Zm12.85,30.16c0,4.75-1.83,7.37-6.52,7.37h-6.34v-18.7h5.3c5.06,0,7.55,1.95,7.55,7.49v3.84Z"/>
-    <polygon fill="#262626" points="175.46 .49 172.65 .49 172.65 43.13 188.86 43.13 188.86 40.58 175.46 40.58 175.46 .49"/>
-    <polygon fill="#262626" points="209.88 3.05 209.88 .49 193.06 .49 193.06 43.13 209.88 43.13 209.88 40.58 195.87 40.58 195.87 22.79 207.5 22.79 207.5 20.23 195.87 20.23 195.87 3.05 209.88 3.05"/>
-    <path fill="url(#g3)" d="m224.32.49h-9.87v42.65h6.7v-16.02h3.17c6.7,0,9.99-3.72,9.99-10.54v-5.54c0-6.82-3.29-10.54-9.99-10.54Zm3.29,16.51c0,3.05-1.16,4.02-3.29,4.02h-3.17V6.58h3.17c2.13,0,3.29.97,3.29,4.02v6.4Z"/>
-    <polygon fill="url(#g4)" points="244.42 .49 237.72 .49 237.72 43.13 255.45 43.13 255.45 37.04 244.42 37.04 244.42 .49"/>
-    <path fill="url(#g5)" d="m271.71,33.39c0,3.05-1.34,4.14-3.47,4.14s-3.47-1.1-3.47-4.14V.49h-6.7v32.47c0,6.82,3.41,10.72,9.99,10.72s9.99-3.9,9.99-10.72V.49h-6.34v32.9Z"/>
-    <path fill="url(#g6)" d="m288.47,10.3c0-3.05,1.22-4.2,3.35-4.2s3.35,1.16,3.35,4.2v1.77h6.34v-1.34c0-6.82-3.35-10.72-9.87-10.72s-9.87,3.9-9.87,10.72c0,12.18,13.1,13.83,13.1,22.6,0,3.05-1.34,4.14-3.47,4.14s-3.47-1.1-3.47-4.14v-3.05h-6.34v2.62c0,6.82,3.41,10.72,9.99,10.72s9.99-3.9,9.99-10.72c0-12.18-13.1-13.83-13.1-22.6Z"/>
-    <path fill="url(#g7)" d="m32.51,38.57h-4c-.99,0-1.79-.8-1.79-1.79v-1.55c-.03-.21-.06-.42-.06-.63v-9.22h-9.22c-.14,0-.28,0-.42-.02h-1.62c-.99,0-1.79-.8-1.79-1.79v-4c0-.99.8-1.79,1.79-1.79h11.26v-9.21c0-.22.02-.42.06-.63v-1.38c0-.99.8-1.79,1.79-1.79h4c.99,0,1.79.8,1.79,1.79v11.22h9.1V6.47c0-3.57-2.9-6.47-6.47-6.47H6.74C3.17,0,.27,2.9.27,6.47v30.2c0,3.57,2.9,6.47,6.47,6.47h30.2c3.57,0,6.47-2.9,6.47-6.47v-11.28h-9.1v11.4c0,.99-.8,1.79-1.79,1.79Z"/>
-    </svg>`;
-
-    // Stats
-    const stats = calcStats();
-    const sg = el('div','stats-grid');
-    sg.appendChild(statCard('מאושר', stats.approved, 'stat-green', 'מאושר מלא'));
-    sg.appendChild(statCard('חלקי', stats.partial, 'stat-amber', 'מאושר חלקי'));
-    sg.appendChild(statCard('פגישה', stats.meeting, 'stat-purple', 'תואם פגישה'));
-    sg.appendChild(statCard('לא אושר', stats.rejected, 'stat-red', 'לא מאושר'));
-    h.appendChild(sg);
-
-    // Tabs
-    const tabs = el('div','tabs');
-    ['active','archive'].forEach(t => {
-        const b = el('button','tab-btn' + (state.tab===t?' active':''));
-        b.textContent = t==='active' ? 'לקוחות פעילים' : 'ארכיון';
-        b.addEventListener('click', () => { state.tab = t; state.search=''; state.statusFilter=null; render(); });
-        tabs.appendChild(b);
-    });
-    h.appendChild(tabs);
-
-    return h;
-}
-
-function statCard(label, val, cls, statusVal) {
-    const isActive = state.statusFilter === statusVal;
-    const d = el('div', 'stat-card ' + cls + (isActive ? ' stat-active' : ''));
-    d.style.cursor = 'pointer';
-    d.style.transition = 'transform 0.15s, box-shadow 0.15s';
-    if (isActive) {
-        d.style.transform = 'scale(1.08)';
-        d.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)';
-    }
-    d.innerHTML = `<div class="stat-label">${label}</div><div class="stat-val">${val}</div>`;
-    d.addEventListener('click', () => {
-        state.statusFilter = (state.statusFilter === statusVal) ? null : statusVal;
-        render();
-    });
-    return d;
-}
-
-function calcStats() {
-    const s = {approved:0,partial:0,rejected:0,meeting:0,submitted:0};
-    state.requests.filter(r=>!r.archived).forEach(r=>{
-        r.offers.forEach(o=>{
-            if(o.status==='מאושר מלא') s.approved++;
-            else if(o.status==='מאושר חלקי') s.partial++;
-            else if(o.status==='לא מאושר') s.rejected++;
-            else if(o.status==='תואם פגישה') s.meeting++;
-            else s.submitted++;
-        });
-    });
-    return s;
-}
-
-// ─── MAIN ────────────────────────────────────────────────────────────────────
-function buildMain() {
-    const m = el('main');
-
-    // Search
-    const sw = el('div','search-wrap');
-    const si = el('input','input-field');
-    si.type='text'; si.placeholder='חיפוש לקוח...';
-    si.style.cssText = 'padding:10px 14px;font-size:16px;';
-    si.value = state.search;
-    si.addEventListener('input', e=>{ state.search=e.target.value; render(); });
-    sw.appendChild(si);
-    m.appendChild(sw);
-
-    // Form (active tab only, no search)
-    if (state.tab==='active' && !state.search) {
-        m.appendChild(buildForm());
-    }
-
-    // Cards
-    const filtered = state.requests.filter(r => {
-        if (r.archived !== (state.tab==='archive')) return false;
-        if (!r.client.toLowerCase().includes(state.search.toLowerCase())) return false;
-        if (state.statusFilter) {
-            return r.offers.some(o => o.status === state.statusFilter);
-        }
-        return true;
-    });
-
-    if (!filtered.length) {
-        const em = el('div','empty-msg');
-        em.textContent = 'אין לקוחות להצגה';
-        m.appendChild(em);
-    } else {
-        filtered.forEach((req, idx) => m.appendChild(buildCard(req, idx)));
-    }
-
-    return m;
-}
-
-function buildForm() {
-    const f = el('div','form-card');
-
-    const g2 = el('div','form-grid2');
-    const cinput = makeInput('שם הלקוח', state.form.client, v=>{ state.form.client=v; });
-    const ainput = makeInput('שם סוכנות', state.form.agency, v=>{ state.form.agency=v; });
-    g2.appendChild(cinput); g2.appendChild(ainput);
-    f.appendChild(g2);
-
-    // Body dropdown
-    f.appendChild(buildBodyDropdown());
-
-    // Amount
-    const amtInput = el('input','input-field amount-input');
-    amtInput.type='tel'; amtInput.inputMode='numeric';
-    amtInput.placeholder='סכום מימון מבוקש';
-    amtInput.style.marginTop='8px';
-    amtInput.value = fmtNum(state.form.amount);
-    amtInput.addEventListener('input', e=>{
-        state.form.amount = parseNum(e.target.value);
-        e.target.value = fmtNum(state.form.amount);
-    });
-    f.appendChild(amtInput);
-
-    const btn = el('button','btn-gold');
-    btn.textContent='הקם לקוח חדש';
-    const ok = state.form.client && state.form.amount && state.form.body;
-    btn.disabled = !ok;
-    btn.addEventListener('click', handleAddClient);
-    f.appendChild(btn);
-
-    return f;
-}
-
-function buildBodyDropdown() {
-    const wrap = el('div','dropdown-wrap');
-    const btn = el('button', 'dropdown-btn' + (state.form.body?'':' placeholder'));
-    btn.innerHTML = `<span>${state.form.body || 'בחר גוף מימון'}</span><svg class="chevron${state.bodyListOpen?' open':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
-    btn.addEventListener('click', e=>{ e.stopPropagation(); state.bodyListOpen=!state.bodyListOpen; render(); });
-    wrap.appendChild(btn);
-
-    if (state.bodyListOpen) {
-        const list = el('div','dropdown-list');
-        BODIES.forEach(b => {
-            const item = el('button','dropdown-item'+(state.form.body===b?' selected':''));
-            item.textContent=b;
-            item.addEventListener('click', ()=>{ state.form.body=b; state.bodyListOpen=false; render(); });
-            list.appendChild(item);
-        });
-        wrap.appendChild(list);
-        // Close on outside click
-        setTimeout(()=>{
-            document.addEventListener('click', function closeDD(){ state.bodyListOpen=false; render(); document.removeEventListener('click',closeDD); });
-        },0);
-    }
-
-    return wrap;
-}
-
-function makeInput(placeholder, value, onChange) {
-    const i = el('input','input-field');
-    i.placeholder=placeholder; i.value=value;
-    i.style.cssText='padding:10px 12px;font-size:16px;';
-    i.addEventListener('input', e=>{ onChange(e.target.value); });
-    // Don't re-render on every keystroke for form inputs — just update state
-    i.addEventListener('change', ()=> render());
-    return i;
-}
-
-function handleAddClient() {
-    const f = state.form;
-    if (!f.client || !f.amount || !f.body) return;
-    const newReq = {
-        id: genId(),
-        client: f.client,
-        agency: f.agency || 'כללי',
-        amount: parseInt(parseNum(String(f.amount))) || 0,
-        notes: '',
-        offers: [{ id: genId(), body: f.body, status: 'הוגש', approved: 0 }],
-        archived: false,
-    };
-    state.requests.unshift(newReq);
-    state.form = { client:'', agency:'', amount:'', body:'' };
-    saveData(state.requests);
-    render();
-}
-
-// ─── CARD ────────────────────────────────────────────────────────────────────
-function buildCard(req, idx) {
-    const card = el('div','client-card');
-
-    // Header
-    const hdr = el('div','card-header');
-    const left = el('div','card-header-left');
-    const num = el('span','card-num'); num.textContent='#'+(idx+1);
-    const nameWrap = el('div');
-    const lbl = el('div','card-client-label'); lbl.textContent='לקוח';
-    const nm = el('div','card-client-name'); nm.textContent=req.client;
-    nameWrap.appendChild(lbl); nameWrap.appendChild(nm);
-    left.appendChild(num); left.appendChild(nameWrap);
-
-    const right = el('div','card-header-right');
-    // Arrows
-    const arrows = el('div','arrow-btns');
-    const upBtn = el('button','arrow-btn'); upBtn.innerHTML='<svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"/></svg>';
-    upBtn.addEventListener('click', ()=>{ moveReq(req.id,-1); });
-    const dnBtn = el('button','arrow-btn'); dnBtn.innerHTML='<svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>';
-    dnBtn.addEventListener('click', ()=>{ moveReq(req.id,1); });
-    arrows.appendChild(upBtn); arrows.appendChild(dnBtn);
-
-    const agencyWrap = el('div'); agencyWrap.style.textAlign='left';
-    const aLbl = el('div','card-agency-label'); aLbl.textContent='סוכנות';
-    const aBadge = el('div','card-agency-badge'); aBadge.textContent=req.agency;
-    agencyWrap.appendChild(aLbl); agencyWrap.appendChild(aBadge);
-
-    right.appendChild(arrows); right.appendChild(agencyWrap);
-    hdr.appendChild(left); hdr.appendChild(right);
-    card.appendChild(hdr);
-
-    // Offers
-    const offersWrap = el('div','offers-wrap');
-    req.offers.forEach((off, oIdx) => offersWrap.appendChild(buildOffer(req, off, oIdx)));
-    card.appendChild(offersWrap);
-
-    // Notes toggle
-    const noteToggle = el('button','notes-toggle');
-    const hasNote = req.notes && req.notes.trim().length > 0;
-    const isOpen = state.openNotes[req.id];
-    noteToggle.innerHTML = `<span style="display:flex;align-items:center;gap:4px"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>${hasNote ? '<span class="notes-dot"></span>' : ''}${hasNote ? 'הערות' : 'הוסף הערה'}</span><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform:rotate(${isOpen?'180deg':'0deg'});transition:transform .2s"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>`;
-    noteToggle.addEventListener('click', ()=>{ state.openNotes[req.id]=!state.openNotes[req.id]; render(); });
-    card.appendChild(noteToggle);
-
-    if (isOpen) {
-        const notesWrap = el('div','notes-area-wrap');
-        const ta = el('textarea','notes-area');
-        ta.rows=2; ta.placeholder='הערות על הלקוח, תנאים, פרטים נוספים...';
-        ta.value=req.notes||'';
-        ta.addEventListener('input', e=>{ updateNotes(req.id, e.target.value); });
-        notesWrap.appendChild(ta);
-        card.appendChild(notesWrap);
-    }
-
-    // Actions
-    const actions = el('div','card-actions');
-    const addBodyBtn = el('button','btn-secondary btn-gold-soft');
-    addBodyBtn.textContent='גוף נוסף';
-    addBodyBtn.addEventListener('click',()=> openAddBodyModal(req.id));
-
-    const archiveBtn = el('button','btn-secondary btn-gray-soft');
-    archiveBtn.textContent = req.archived ? 'החזר לפעילים' : 'לארכיון';
-    archiveBtn.addEventListener('click',()=>{ setArchived(req.id,!req.archived); });
-
-    actions.appendChild(addBodyBtn); actions.appendChild(archiveBtn);
-    card.appendChild(actions);
-
-    return card;
-}
-
-function buildOffer(req, off, oIdx) {
-    const row = el('div','offer-row');
-    const isActive = state.activeOffer && state.activeOffer.reqId===req.id && state.activeOffer.offId===off.id;
-
-    const grid = el('div','offer-grid');
-
-    const idxEl = el('span','offer-idx'); idxEl.textContent=(oIdx+1)+'.';
-    const bodyEl = el('span','offer-body'); bodyEl.textContent=off.body;
-    const amtEl = el('span','offer-amount'); amtEl.textContent='₪'+fmtNum(req.amount);
-
-    let approvedEl;
-    if (off.status==='מאושר חלקי') {
-        approvedEl = el('input','partial-input');
-        approvedEl.type='tel'; approvedEl.inputMode='numeric';
-        approvedEl.value = fmtNum(off.approved);
-        approvedEl.addEventListener('input', e=>{
-            const raw = parseNum(e.target.value);
-            updateApproved(req.id, off.id, raw);
-            e.target.value = fmtNum(raw);
-        });
-    } else {
-        approvedEl = el('span','offer-approved');
-        approvedEl.textContent = '₪'+fmtNum(off.approved);
-    }
-
-    const statusBtn = el('button','status-btn '+getStatusCls(off.status));
-    statusBtn.textContent = off.status;
-    statusBtn.addEventListener('click', ()=>{
-        state.activeOffer = isActive ? null : {reqId:req.id, offId:off.id};
-        render();
-    });
-
-    grid.appendChild(idxEl);
-    grid.appendChild(bodyEl);
-    grid.appendChild(amtEl);
-    grid.appendChild(approvedEl);
-    grid.appendChild(statusBtn);
-    row.appendChild(grid);
-
-    if (isActive) {
-        const picker = el('div','status-picker');
-        STATUSES.forEach(s => {
-            const b = el('button','status-pick-btn '+s.cls);
-            b.textContent=s.value;
-            b.addEventListener('click', ()=> handleStatusChange(req.id, off.id, s.value));
-            picker.appendChild(b);
-        });
-        row.appendChild(picker);
-    }
-
-    return row;
-}
-
-// ─── MODAL ───────────────────────────────────────────────────────────────────
-function buildModal() {
-    const ov = el('div','modal-overlay');
-    const box = el('div','modal-box');
-    const title = el('div','modal-title'); title.textContent=state.modal.title;
-    box.appendChild(title);
-
-    state.modal.options.forEach(opt => {
-        const b = el('button','modal-btn '+(opt.gold?'modal-btn-gold':'modal-btn-default'));
-        b.textContent=opt.label;
-        b.addEventListener('click', opt.fn);
-        box.appendChild(b);
-    });
-
-    const cancel = el('button','modal-btn-cancel');
-    cancel.textContent='ביטול';
-    cancel.addEventListener('click',()=>{ state.modal=null; render(); });
-    box.appendChild(cancel);
-
-    ov.appendChild(box);
-    ov.addEventListener('click', e=>{ if(e.target===ov){ state.modal=null; render(); } });
-    return ov;
-}
-
-// ─── FOOTER ──────────────────────────────────────────────────────────────────
-function buildFooter() {
-    const f = el('footer');
-    f.innerHTML = '<span class="gold-text" style="font-weight:800">Credible Plus v2.2</span> • כל הנתונים נשמרים מקומית';
-    return f;
-}
-
-// ─── ACTIONS ─────────────────────────────────────────────────────────────────
-function handleStatusChange(reqId, offId, newStatus) {
-    state.activeOffer = null;
-
-    if (newStatus === 'לא מאושר') {
-        // Apply status immediately, then show options
-        applyStatus(reqId, offId, newStatus);
-        state.modal = {
-            title: 'הבקשה לא אושרה',
-            options: [
-                { label:'להגיש בגוף מימון אחר', gold:true, fn:()=>{ state.modal=null; openAddBodyModal(reqId); } },
-                { label:'להשאיר פעיל', fn:()=>{ state.modal=null; render(); } },
-                { label:'להעביר לארכיון', fn:()=>{ state.modal=null; setArchived(reqId,true); } },
-            ]
-        };
-    } else if (newStatus === 'תואם פגישה') {
-        applyStatus(reqId, offId, newStatus);
-        state.modal = {
-            title: 'נקבעה פגישה',
-            options: [
-                { label:'להשאיר פעיל', gold:true, fn:()=>{ state.modal=null; render(); } },
-                { label:'להעביר לארכיון', fn:()=>{ state.modal=null; setArchived(reqId,true); } },
-            ]
-        };
-    } else {
-        applyStatus(reqId, offId, newStatus);
-    }
-    render();
-}
-
-function applyStatus(reqId, offId, newStatus) {
-    state.requests = state.requests.map(r => {
-        if (r.id !== reqId) return r;
-        return { ...r, offers: r.offers.map(o => {
-            if (o.id !== offId) return o;
-            return { ...o, status: newStatus, approved: newStatus==='מאושר מלא' ? r.amount : o.approved };
-        })};
-    });
-    saveData(state.requests);
-}
-
-function updateApproved(reqId, offId, val) {
-    state.requests = state.requests.map(r =>
-        r.id!==reqId ? r : { ...r, offers: r.offers.map(o => o.id!==offId ? o : {...o, approved: val} ) }
-    );
-    saveData(state.requests);
-}
-
-function updateNotes(reqId, val) {
-    state.requests = state.requests.map(r => r.id===reqId ? {...r, notes:val} : r);
-    saveData(state.requests);
-}
-
-function setArchived(reqId, archived) {
-    state.requests = state.requests.map(r => r.id===reqId ? {...r, archived} : r);
-    saveData(state.requests);
-    render();
-}
-
-function moveReq(reqId, dir) {
-    const arr = [...state.requests];
-    const i = arr.findIndex(r=>r.id===reqId);
-    const j = i+dir;
-    if (j<0||j>=arr.length) return;
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-    state.requests=arr;
-    saveData(state.requests);
-    render();
-}
-
-function openAddBodyModal(reqId) {
-    state.modal = {
-        title: 'בחר גוף נוסף להגשה',
-        options: BODIES.map(b=>({
-            label: b,
-            fn: ()=>{
-                state.requests = state.requests.map(r =>
-                    r.id!==reqId ? r : { ...r, archived:false, offers:[...r.offers,{id:genId(),body:b,status:'הוגש',approved:0}] }
-                );
-                saveData(state.requests);
-                state.modal=null;
-                state.tab='active';
-                render();
-            }
-        }))
-    };
-    render();
-}
-
-// ─── HELPER ──────────────────────────────────────────────────────────────────
-function el(tag, cls) {
-    const e = document.createElement(tag);
-    if (cls) e.className = cls;
-    return e;
-}
-
-// ─── INIT ────────────────────────────────────────────────────────────────────
-// Block horizontal swipe/scroll completely
-document.addEventListener('touchmove', function(e) {
-    // Allow vertical scroll only
-    if (e.touches.length === 1) {
-        var touch = e.touches[0];
-        if (!touch._startX) return;
-        var dx = Math.abs(touch.clientX - touch._startX);
-        var dy = Math.abs(touch.clientY - touch._startY);
-        if (dx > dy) e.preventDefault();
-    }
-}, { passive: false });
-document.addEventListener('touchstart', function(e) {
-    if (e.touches.length === 1) {
-        e.touches[0]._startX = e.touches[0].clientX;
-        e.touches[0]._startY = e.touches[0].clientY;
-    }
-}, { passive: true });
-
-// Prevent iOS viewport jumping when inputs are focused
-// Save scroll position and restore it after focus
-(function() {
-    var scrollContainer = null;
-    function getScroller() {
-        return document.getElementById('app');
-    }
-    var savedScroll = 0;
-    document.addEventListener('focusin', function(e) {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-            scrollContainer = getScroller();
-            if (scrollContainer) savedScroll = scrollContainer.scrollTop;
-            // Prevent the browser from scrolling the body
-            e.target.addEventListener('focus', function onFocus() {
-                if (scrollContainer) {
-                    setTimeout(function() {
-                        scrollContainer.scrollTop = savedScroll;
-                    }, 50);
-                    setTimeout(function() {
-                        scrollContainer.scrollTop = savedScroll;
-                    }, 150);
-                }
-                e.target.removeEventListener('focus', onFocus);
-            }, { once: true });
-        }
-    }, true);
-})();
-
-// Close dropdowns on outside click
-document.addEventListener('click', ()=>{
-    if (state.bodyListOpen) { state.bodyListOpen=false; render(); }
-});
-
-render();
-</script>
-
+    <div class="agent-ui">
+        <div class="max-w-md mx-auto">
+            <div class="top-bar">
+                <h2 class="text-xl font-black text-white">Credible<span class="text-[#c5a059]">plus</span></h2>
+                <button id="btn-share" onclick="handleShare()" class="share-btn-top">שתף הצעה</button>
+            </div>
+            
+            <div class="space-y-2">
+                <input type="text" id="in-name" placeholder="שם הלקוח" oninput="queueUpdate()">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-amount" inputmode="decimal" placeholder="סכום המימון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-balloon" inputmode="decimal" placeholder="בלון" oninput="formatInput(this); queueUpdate()">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-period" inputmode="numeric" value="60" oninput="queueUpdate()">
+                    <select id="in-route-type" onchange="toggleRouteFields(); queueUpdate()">
+                        <option value="prime">צמוד פריים</option>
+                        <option value="index">צמוד מדד</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2" id="prime-fields">
+                    <input type="tel" id="in-prime-base" inputmode="decimal" value="5.5" oninput="queueUpdate()">
+                    <input type="tel" id="in-prime-margin" inputmode="decimal" value="0.5" oninput="queueUpdate()">
+                </div>
+                <div class="hidden" id="index-fields">
+                    <input type="tel" id="in-index-rate" inputmode="decimal" value="4.5" oninput="queueUpdate()">
+                </div>
+
+                <input type="text" id="in-fee" value="1.5% + 380 ש״ח (+מע״מ)" oninput="queueUpdate()">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-fee-cc" inputmode="decimal" placeholder="עמלה בכ״א (חתימה)" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-fee-hk" inputmode="decimal" placeholder="עמלה בהוראת קבע" oninput="formatInput(this); queueUpdate()">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="tel" id="in-to-repay" inputmode="decimal" placeholder="עובר לפירעון" oninput="formatInput(this); queueUpdate()">
+                    <input type="tel" id="in-to-importer" inputmode="decimal" placeholder="עובר ליבואן" oninput="formatInput(this); queueUpdate()">
+                </div>
+
+                <input type="text" id="in-notes" placeholder="הערות מיוחדות" oninput="queueUpdate()">
+            </div>
+        </div>
+    </div>
+
+    <div id="render-wrap">
+        <div id="document-area">
+            <div class="doc-header-meta">
+                <span>בס"ד</span>
+                <span id="display-date"></span>
+            </div>
+
+            <div class="title-wrapper">
+                <h1 class="doc-main-title">סיכום תנאי מימון רכב</h1>
+            </div>
+
+            <!-- קבוצה 1: לקוח -->
+            <div class="doc-group">
+                <div class="doc-group-title">פרטי הלקוח</div>
+                <div class="row-item"><div class="label">שם הלקוח</div><div class="value" id="out-name">---</div></div>
+            </div>
+
+            <!-- קבוצה 2: מימון -->
+            <div class="doc-group">
+                <div class="doc-group-title">פרטי המימון והחזרים</div>
+                <div class="row-item"><div class="label">סכום המימון</div><div class="value" id="out-amount" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">תשלום חודשי משוער</div><div class="value" id="out-monthly" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">יתרה בסוף תקופה (בלון)</div><div class="value" id="out-balloon" style="direction:ltr;">0 ₪</div></div>
+                <div class="row-item"><div class="label">תקופת הלוואה</div><div class="value" id="out-period">0 חודשים</div></div>
+                <div class="row-item"><div class="label">מסלול ריבית</div><div class="value" id="out-rate" style="direction:ltr;">---</div></div>
+            </div>
+            
+            <!-- קבוצה 3: העברות (הועברה למקום השלישי) -->
+            <div id="group-transfers" class="doc-group hidden">
+                <div class="doc-group-title">פירוט העברות כספים</div>
+                <div id="row-repay" class="row-item hidden"><div class="label">עובר לפירעון</div><div class="value" id="out-to-repay" style="direction:ltr;">0 ₪</div></div>
+                <div id="row-importer" class="row-item hidden"><div class="label">עובר ליבואן</div><div class="value" id="out-to-importer" style="direction:ltr;">0 ₪</div></div>
+            </div>
+
+            <!-- קבוצה 4: עמלות (הועברה למקום הרביעי) -->
+            <div class="doc-group">
+                <div class="doc-group-title">פירוט עמלות</div>
+                <div class="row-item"><div class="label">עמלה</div><div id="out-fee" class="value">---</div></div>
+                <div id="part-cc" class="fee-sub-row hidden"><span>חלק יחסי מהעמלה יגבה בכ״א במעמד החתימה:</span> <strong id="out-fee-cc">0 ₪</strong></div>
+                <div id="part-hk" class="fee-sub-row hidden"><span>החלק הנוסף יגבה בהוראת קבע:</span> <strong id="out-fee-hk">0 ₪</strong></div>
+            </div>
+
+            <!-- קבוצה 5: הערות -->
+            <div id="row-notes" class="doc-group hidden">
+                <div class="doc-group-title">הערות ודגשים</div>
+                <div class="notes-content" id="out-notes"></div>
+            </div>
+
+            <div class="doc-footer-legal">
+‎                • הרכב נרשם על שם הלקוח ומשועבד לגוף המממן בלבד • בכפוף לתנאי החיתום • ט.ל.ח
+                <br>
+‎                • ההצעה תקפה ליום שליחת מסמך זה •
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "";
+        let lastBlob = null;
+        let updateTimeout = null;
+
+        function formatInput(el) {
+            let v = el.value.replace(/,/g, '');
+            if(!isNaN(v) && v !== "") el.value = parseFloat(v).toLocaleString('en-US');
+        }
+
+        function getVal(id) { return document.getElementById(id).value.replace(/,/g, '') || 0; }
+        function formatNum(n) { return "₪ " + Math.round(n).toLocaleString('en-US'); }
+
+        function toggleRouteFields() {
+            const t = document.getElementById('in-route-type').value;
+            document.getElementById('prime-fields').classList.toggle('hidden', t !== 'prime');
+            document.getElementById('index-fields').classList.toggle('hidden', t !== 'index');
+        }
+
+        function queueUpdate() {
+            update();
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(preRender, 800);
+        }
+
+        async function preRender() {
+            try {
+                const el = document.getElementById('document-area');
+                const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+                canvas.toBlob(blob => { lastBlob = blob; }, 'image/png', 1.0);
+            } catch(e) {}
+        }
+
+        function update() {
+            const amount = parseFloat(getVal('in-amount'));
+            const period = parseInt(getVal('in-period')) || 1;
+            const balloon = parseFloat(getVal('in-balloon'));
+            const type = document.getElementById('in-route-type').value;
+            
+            let totalRate = 0, rateText = "";
+            if(type === 'prime') {
+                const base = parseFloat(document.getElementById('in-prime-base').value) || 0;
+                const margin = parseFloat(document.getElementById('in-prime-margin').value) || 0;
+                totalRate = (base + margin).toFixed(2);
+                const marginStr = margin >= 0 ? `+${margin}` : `${margin}`;
+                rateText = `<bdi>(P${marginStr}%)</bdi> ${totalRate}%`;
+            } else {
+                totalRate = parseFloat(document.getElementById('in-index-rate').value) || 0;
+                rateText = `צמוד מדד ${totalRate}%`;
+            }
+
+            const mRate = (parseFloat(totalRate)/100)/12;
+            const bPV = balloon / Math.pow(1+mRate, period);
+            const lAmt = amount - bPV;
+            const monthly = mRate === 0 ? lAmt/period : lAmt * (mRate * Math.pow(1+mRate, period)) / (Math.pow(1+mRate, period) - 1);
+
+            document.getElementById('out-name').innerText = document.getElementById('in-name').value || "---";
+            document.getElementById('out-amount').innerText = formatNum(amount);
+            document.getElementById('out-monthly').innerText = formatNum(monthly);
+            document.getElementById('out-balloon').innerText = formatNum(balloon);
+            document.getElementById('out-period').innerText = period + " חודשים";
+            document.getElementById('out-rate').innerHTML = rateText;
+            
+            document.getElementById('out-fee').innerText = document.getElementById('in-fee').value || "---";
+
+            const feeCC = parseFloat(getVal('in-fee-cc'));
+            const feeHK = parseFloat(getVal('in-fee-hk'));
+            
+            if(feeCC > 0) {
+                document.getElementById('part-cc').classList.remove('hidden');
+                document.getElementById('out-fee-cc').innerText = formatNum(feeCC);
+            } else document.getElementById('part-cc').classList.add('hidden');
+            
+            if(feeHK > 0) {
+                document.getElementById('part-hk').classList.remove('hidden');
+                document.getElementById('out-fee-hk').innerText = formatNum(feeHK);
+            } else document.getElementById('part-hk').classList.add('hidden');
+
+            const toRepay = parseFloat(getVal('in-to-repay'));
+            const toImporter = parseFloat(getVal('in-to-importer'));
+            if(toRepay > 0 || toImporter > 0) {
+                document.getElementById('group-transfers').classList.remove('hidden');
+                if(toRepay > 0) {
+                    document.getElementById('row-repay').classList.remove('hidden');
+                    document.getElementById('out-to-repay').innerText = formatNum(toRepay);
+                } else document.getElementById('row-repay').classList.add('hidden');
+                
+                if(toImporter > 0) {
+                    document.getElementById('row-importer').classList.remove('hidden');
+                    document.getElementById('out-to-importer').innerText = formatNum(toImporter);
+                } else document.getElementById('row-importer').classList.add('hidden');
+            } else {
+                document.getElementById('group-transfers').classList.add('hidden');
+            }
+
+            const n = document.getElementById('in-notes').value;
+            if(n) { document.getElementById('row-notes').classList.remove('hidden'); document.getElementById('out-notes').innerText = n; }
+            else document.getElementById('row-notes').classList.add('hidden');
+        }
+
+        async function handleShare() {
+            try {
+                const name = document.getElementById('out-name').innerText.trim() || "לקוח";
+                if (!lastBlob) {
+                    const el = document.getElementById('document-area');
+                    const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+                    lastBlob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));
+                }
+                const file = new File([lastBlob], `הצעה_ל-${name}.png`, { type: 'image/png' });
+                if (navigator.share) {
+                    await navigator.share({ 
+                        files: [file], 
+                        title: 'קרדיבל פלוס - הצעה',
+                        text: `סיכום פרטי הלוואה - ${name}`
+                    });
+                }
+            } catch (err) {}
+        }
+        
+        window.onload = () => { 
+            document.getElementById('display-date').innerText = new Date().toLocaleDateString('he-IL');
+            update(); 
+            setTimeout(preRender, 1500);
+        };
+    </script>
 </body>
 </html>
